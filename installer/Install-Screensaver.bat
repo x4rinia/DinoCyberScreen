@@ -16,6 +16,7 @@ if errorlevel 1 (
 
 echo Beende laufende Bildschirmschoner-Prozesse...
 powershell -Command "Get-Process -Name '*DinoCyber*' -ErrorAction SilentlyContinue | Stop-Process -Force"
+sc stop DinoCyberScreen >nul 2>&1
 timeout /t 2 /nobreak >nul
 
 rem --- 2. Quelle definieren ---
@@ -42,8 +43,7 @@ if not exist "%SOURCE_DIR%\DinoCyberScreen.scr" (
 rem --- 4. Zielordner erstellen ---
 echo.
 echo Installiere DinoCyberScreen nach "%TARGET_DIR%"...
-if exist "%TARGET_DIR%" rmdir /s /q "%TARGET_DIR%"
-mkdir "%TARGET_DIR%"
+if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%"
 if errorlevel 1 (
   echo FEHLER: Der Zielordner "%TARGET_DIR%" konnte nicht erstellt werden.
   pause
@@ -51,7 +51,7 @@ if errorlevel 1 (
 )
 
 rem --- 5. Dateien kopieren ---
-"%SystemRoot%\System32\robocopy.exe" "%SOURCE_DIR%" "%TARGET_DIR%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS /NP >nul
+"%SystemRoot%\System32\robocopy.exe" "%SOURCE_DIR%" "%TARGET_DIR%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS /NP /XF "*.sys" >nul
 if errorlevel 8 (
   echo FEHLER: Dateien konnten nicht kopiert werden. Robocopy Code: %ERRORLEVEL%
   pause

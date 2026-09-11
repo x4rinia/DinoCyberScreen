@@ -16,6 +16,7 @@ if errorlevel 1 (
 
 echo Beende laufende Bildschirmschoner-Prozesse...
 powershell -Command "Get-Process -Name '*DinoCyber*' -ErrorAction SilentlyContinue | Stop-Process -Force"
+sc stop DinoCyberScreen >nul 2>&1
 timeout /t 2 /nobreak >nul
 
 rem --- 2. Dateien entfernen ---
@@ -26,8 +27,8 @@ echo.
 echo Entferne DinoCyberScreen...
 
 if exist "%TARGET_DIR%" (
-  rmdir /s /q "%TARGET_DIR%"
-  echo - %TARGET_DIR% geloescht.
+  del /f /q "%TARGET_DIR%\*.*" >nul 2>&1
+  echo - Dateien in %TARGET_DIR% geloescht.
 )
 
 if exist "%TARGET_SCR%" (
