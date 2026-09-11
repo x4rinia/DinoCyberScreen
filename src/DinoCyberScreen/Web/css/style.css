@@ -232,7 +232,6 @@ button { font: inherit; }
 .secondary-monitor .core-title strong { display: none; }
 .secondary-monitor .core-title small::after { content: ' - AUXILIARY DISPLAY ACTIVE'; color: var(--muted); }
 .secondary-monitor .dino-hologram { width: min(45%, 500px); opacity: 0.15; filter: hue-rotate(var(--hologram-hue)) saturate(0.2); }
-.secondary-monitor .core-canvas-wrap::before, .secondary-monitor .core-canvas-wrap::after { display: none; }
 .secondary-monitor .ambient-grid { opacity: 0.08; }
 
 /* --- Core Clock & Binary Rain --- */
@@ -249,3 +248,8 @@ body, * { cursor: none !important; }
 .core-clock { display: none; }
 .single-monitor .core-clock { display: block; }
 .secondary-monitor .core-clock { display: block; }
+
+/* --- Primary Multi Monitor Extension --- */
+.primary-multi .core-panel { display: none !important; }
+.primary-multi .dashboard { grid-template-columns: 1fr 1fr; }
+.primary-multi .right-stack { grid-column: 2; }

@@ -12,10 +12,9 @@ namespace DinoCyberScreen;
 public partial class ScreensaverWindow : Window
 {
     private readonly IntPtr _previewParent;
-    private DateTime _inputEnabledAt = DateTime.UtcNow.AddSeconds(5.0);
-    private System.Windows.Point? _initialMousePosition;
     private System.Drawing.Rectangle _bounds;
     private DispatcherTimer? _previewWatchdog;
+    private DispatcherTimer _cursorTimer;
     private bool _closing;
 
     public event EventHandler? ExitRequested;
@@ -27,6 +26,12 @@ public partial class ScreensaverWindow : Window
         WindowState = System.Windows.WindowState.Normal;
         _bounds = bounds;
         Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+        _cursorTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = TimeSpan.FromSeconds(2.5) };
+        _cursorTimer.Tick += (_, _) =>
+        {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+            _cursorTimer.Stop();
+        };
         
         if (isBlank)
         {
@@ -45,6 +50,8 @@ public partial class ScreensaverWindow : Window
         InitializeComponent();
         _previewParent = previewParent;
         Topmost = false;
+        _cursorTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = TimeSpan.FromSeconds(2.5) };
+        _cursorTimer.Tick += (_, _) => { Mouse.OverrideCursor = System.Windows.Input.Cursors.None; _cursorTimer.Stop(); };
         Hud.Configure(settingsService, previewMode: true);
     }
 
@@ -52,8 +59,6 @@ public partial class ScreensaverWindow : Window
     {
         Loaded += (_, _) =>
         {
-            _inputEnabledAt = DateTime.UtcNow.AddSeconds(5.0);
-            _initialMousePosition = Mouse.GetPosition(this);
             Focus();
         };
         MouseMove += OnMouseMove;
@@ -65,17 +70,12 @@ public partial class ScreensaverWindow : Window
 
     private void OnMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (DateTime.UtcNow < _inputEnabledAt)
+        if (Mouse.OverrideCursor != null)
         {
-            // During grace period: keep refreshing origin so that movement BEFORE
-            // the window is fully visible does not count as a trigger gesture.
-            _initialMousePosition = e.GetPosition(this);
-            return;
+            Mouse.OverrideCursor = null; // restore default
         }
-        var current = e.GetPosition(this);
-        if (_initialMousePosition is { } origin &&
-            Math.Abs(current.X - origin.X) + Math.Abs(current.Y - origin.Y) > 30)
-            RequestExit();
+        _cursorTimer.Stop();
+        _cursorTimer.Start();
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -124,7 +124,7 @@ public partial class ScreensaverWindow : Window
 
     private void RequestExit()
     {
-        if (_previewParent != IntPtr.Zero || _closing || DateTime.UtcNow < _inputEnabledAt) return;
+        if (_previewParent != IntPtr.Zero || _closing) return;
         _closing = true;
         Mouse.OverrideCursor = null;
         ExitRequested?.Invoke(this, EventArgs.Empty);
@@ -132,6 +132,7 @@ public partial class ScreensaverWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
+        _cursorTimer.Stop();
         Mouse.OverrideCursor = null;
         _previewWatchdog?.Stop();
         Hud.Dispose();

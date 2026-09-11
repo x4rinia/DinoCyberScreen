@@ -80,7 +80,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             var url = "https://dinocore.local/index.html";
             if (_isSecondary) url += "?secondary=1";
             else if (isSingleMonitor) url += "?singleMonitor=1";
-            else url += "?primary=1";
+            else url += "?primaryMulti=1";
             Browser.Source = new Uri(url);
         }
         catch (Exception ex)

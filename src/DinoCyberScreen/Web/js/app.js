@@ -13,6 +13,7 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('secondary') === '1') document.body.classList.add('secondary-monitor');
 if (urlParams.get('singleMonitor') === '1') document.body.classList.add('single-monitor');
 if (urlParams.get('primary') === '1') document.body.classList.add('primary-monitor');
+if (urlParams.get('primaryMulti') === '1') document.body.classList.add('primary-multi');
 
 initializeCharts();initializeNetwork();initializeCore();initializeStreams();initializeEvents();
 
