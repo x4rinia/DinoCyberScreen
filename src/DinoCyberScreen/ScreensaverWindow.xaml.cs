@@ -25,11 +25,11 @@ public partial class ScreensaverWindow : Window
         _previewParent = IntPtr.Zero;
         WindowState = System.Windows.WindowState.Normal;
         _bounds = bounds;
-        Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+        this.Cursor = System.Windows.Input.Cursors.None;
         _cursorTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = TimeSpan.FromSeconds(2.5) };
         _cursorTimer.Tick += (_, _) =>
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+            this.Cursor = System.Windows.Input.Cursors.None;
             _cursorTimer.Stop();
         };
         
@@ -50,8 +50,9 @@ public partial class ScreensaverWindow : Window
         InitializeComponent();
         _previewParent = previewParent;
         Topmost = false;
+        this.Cursor = System.Windows.Input.Cursors.None;
         _cursorTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = TimeSpan.FromSeconds(2.5) };
-        _cursorTimer.Tick += (_, _) => { Mouse.OverrideCursor = System.Windows.Input.Cursors.None; _cursorTimer.Stop(); };
+        _cursorTimer.Tick += (_, _) => { this.Cursor = System.Windows.Input.Cursors.None; _cursorTimer.Stop(); };
         Hud.Configure(settingsService, previewMode: true);
     }
 
@@ -70,9 +71,9 @@ public partial class ScreensaverWindow : Window
 
     private void OnMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (Mouse.OverrideCursor != null)
+        if (this.Cursor != System.Windows.Input.Cursors.Arrow)
         {
-            Mouse.OverrideCursor = null; // restore default
+            this.Cursor = System.Windows.Input.Cursors.Arrow;
         }
         _cursorTimer.Stop();
         _cursorTimer.Start();
@@ -126,14 +127,14 @@ public partial class ScreensaverWindow : Window
     {
         if (_previewParent != IntPtr.Zero || _closing) return;
         _closing = true;
-        Mouse.OverrideCursor = null;
+        this.Cursor = System.Windows.Input.Cursors.Arrow;
         ExitRequested?.Invoke(this, EventArgs.Empty);
     }
 
     protected override void OnClosed(EventArgs e)
     {
         _cursorTimer.Stop();
-        Mouse.OverrideCursor = null;
+        this.Cursor = System.Windows.Input.Cursors.Arrow;
         _previewWatchdog?.Stop();
         Hud.Dispose();
         base.OnClosed(e);
