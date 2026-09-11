@@ -1,0 +1,11 @@
+<Window x:Class="DinoCyberScreen.ScreensaverWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:DinoCyberScreen.Controls"
+        Title="DinoCyberScreen"
+        WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
+        Background="#000000" Topmost="True">
+    <Grid>
+        <controls:HudView x:Name="Hud" IsHitTestVisible="False" />
+    </Grid>
+</Window>

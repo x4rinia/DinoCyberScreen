@@ -1,0 +1,24 @@
+<Application x:Class="DinoCyberScreen.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <SolidColorBrush x:Key="WindowBackground" Color="#000000" />
+        <SolidColorBrush x:Key="PanelBackground" Color="#030506" />
+        <SolidColorBrush x:Key="Cyan" Color="#26D9FF" />
+        <SolidColorBrush x:Key="MutedText" Color="#8099A8" />
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
+            <Setter Property="Foreground" Value="#D9F5FF" />
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
+            <Setter Property="Background" Value="#06090B" />
+            <Setter Property="Foreground" Value="#D9F5FF" />
+            <Setter Property="BorderBrush" Value="#237A91" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="Margin" Value="4" />
+        </Style>
+    </Application.Resources>
+</Application>

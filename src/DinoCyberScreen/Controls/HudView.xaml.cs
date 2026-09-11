@@ -1,0 +1,127 @@
+using System.Text.Json;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using DinoCyberScreen.Models;
+using DinoCyberScreen.Services;
+using Microsoft.Web.WebView2.Core;
+
+namespace DinoCyberScreen.Controls;
+
+public partial class HudView : System.Windows.Controls.UserControl, IDisposable
+{
+    private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web);
+    private readonly DispatcherTimer _timer;
+    private TelemetryService? _telemetry;
+    private SettingsService? _settingsService;
+    private AppSettings _settings = new();
+    private bool _previewMode;
+    private bool _ready;
+    private bool _disposed;
+
+    public event EventHandler? SettingsRequested;
+
+    public HudView()
+    {
+        InitializeComponent();
+        _timer = new DispatcherTimer(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(750) };
+        _timer.Tick += SendTelemetry;
+        Loaded += Initialize;
+    }
+
+    public void Configure(SettingsService settingsService, bool previewMode)
+    {
+        _settingsService = settingsService;
+        _previewMode = previewMode;
+        _settings = settingsService.Load();
+    }
+
+    public void ReloadSettings()
+    {
+        if (_settingsService is null) return;
+        _settings = _settingsService.Load();
+        SendEnvelope("settings", _settings);
+    }
+
+    private async void Initialize(object sender, RoutedEventArgs e)
+    {
+        if (_ready || _disposed) return;
+        try
+        {
+            _telemetry = new TelemetryService();
+            var userDataFolder = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "DinoCyberScreen", "WebView2");
+            Directory.CreateDirectory(userDataFolder);
+            var webViewEnvironment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
+            await Browser.EnsureCoreWebView2Async(webViewEnvironment);
+            Browser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+            Browser.CoreWebView2.Settings.AreDevToolsEnabled = !_previewMode;
+            Browser.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = !_previewMode;
+            Browser.CoreWebView2.Settings.IsStatusBarEnabled = false;
+            Browser.CoreWebView2.WebMessageReceived += OnWebMessage;
+            Browser.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
+
+            var webRoot = Path.Combine(AppContext.BaseDirectory, "Web");
+            if (!Directory.Exists(webRoot)) throw new DirectoryNotFoundException($"Web assets not found: {webRoot}");
+            Browser.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                "dinocore.local", webRoot, CoreWebView2HostResourceAccessKind.DenyCors);
+            Browser.Source = new Uri("https://dinocore.local/index.html");
+        }
+        catch (Exception ex)
+        {
+            Fallback.Visibility = Visibility.Visible;
+            FallbackMessage.Text = "Microsoft Edge WebView2 Runtime konnte nicht initialisiert werden.\n" + ex.Message;
+        }
+    }
+
+    private void OnNavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
+    {
+        if (!e.IsSuccess) return;
+        _ready = true;
+        SendEnvelope("settings", _settings);
+        SendTelemetry(this, EventArgs.Empty);
+        _timer.Start();
+    }
+
+    private void SendTelemetry(object? sender, EventArgs e)
+    {
+        if (!_ready || _telemetry is null || _disposed) return;
+        try { SendEnvelope("telemetry", _telemetry.Read(_settings)); }
+        catch { /* A failed sensor sample must never stop the renderer. */ }
+    }
+
+    private void SendEnvelope<T>(string type, T payload)
+    {
+        if (!_ready || Browser.CoreWebView2 is null) return;
+        var message = JsonSerializer.Serialize(new { type, payload }, _json);
+        Browser.CoreWebView2.PostWebMessageAsJson(message);
+    }
+
+    private void OnWebMessage(object? sender, CoreWebView2WebMessageReceivedEventArgs e)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(e.WebMessageAsJson);
+            var command = document.RootElement.TryGetProperty("command", out var value) ? value.GetString() : null;
+            if (command == "openSettings" && !_previewMode)
+                SettingsRequested?.Invoke(this, EventArgs.Empty);
+        }
+        catch { }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        _timer.Stop();
+        _telemetry?.Dispose();
+        if (Browser.CoreWebView2 is not null)
+        {
+            Browser.CoreWebView2.WebMessageReceived -= OnWebMessage;
+            Browser.CoreWebView2.NavigationCompleted -= OnNavigationCompleted;
+        }
+        Browser.Dispose();
+    }
+}
