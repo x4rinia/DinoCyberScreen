@@ -26,6 +26,12 @@ function setMode(mode,manual=false){
   const interval = getSettings().modeIntervalSeconds !== undefined ? getSettings().modeIntervalSeconds : 120;
   const index=modes.indexOf(mode);if(index<0||app.dataset.mode===mode)return;currentMode=index;
   app.dataset.mode=mode;document.querySelectorAll('#modeNav button').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode));
+  const trans = $('.transition');
+  if(trans) {
+    trans.classList.remove('run');
+    void trans.offsetWidth;
+    trans.classList.add('run');
+  }
   nextModeAt = interval > 0 ? performance.now() + interval*1000 : Infinity;
 }
 

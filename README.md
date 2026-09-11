@@ -1,4 +1,4 @@
-﻿# DinoCyberScreen
+# DinoCyberScreen
 
 ![DinoCyberScreen Preview](docs/implementation-black-green-1920x1080.png)
 
@@ -9,7 +9,7 @@
 - **Live Telemetry:** Displays your real-time CPU and GPU temperatures directly on your screen.
 - **Cyberpunk Aesthetics:** A sleek, dark user interface with glowing accents.
 - **Holographic Visuals:** Features a futuristic Ankylosaurus hologram as the centerpiece.
-- **Multi-Monitor Support:** Works seamlessly across all your connected displays.
+- **Multi-Monitor & Single-Monitor Support:** Works seamlessly on 1 or 2 monitors. On 2 monitors, it displays the Dino Hologram Core on the secondary display and the Cyber Operations Dashboard on the primary display. On a single monitor, everything is combined into a unified overview layout.
 
 ## Installation
 

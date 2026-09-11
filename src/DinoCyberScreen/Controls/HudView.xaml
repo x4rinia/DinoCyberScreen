@@ -5,6 +5,7 @@
              Background="#000000">
     <Grid Background="#000000">
         <wv2:WebView2 x:Name="Browser" DefaultBackgroundColor="#000000" />
+        <Image x:Name="PreviewImage" Visibility="Collapsed" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center" />
         <Border x:Name="Fallback" Visibility="Collapsed" Background="#000000">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="DINO CORE // WEB RENDERER OFFLINE" FontSize="22" Foreground="#26D9FF" HorizontalAlignment="Center" />

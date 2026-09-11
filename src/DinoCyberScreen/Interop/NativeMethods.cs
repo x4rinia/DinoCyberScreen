@@ -42,6 +42,17 @@ internal static class NativeMethods
     [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
     private static extern IntPtr SetWindowLongPtr64(IntPtr handle, int index, IntPtr value);
 
+    [Flags]
+    internal enum ExecutionState : uint
+    {
+        EsSystemRequired = 0x00000001,
+        EsDisplayRequired = 0x00000002,
+        EsContinuous = 0x80000000
+    }
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    internal static extern ExecutionState SetThreadExecutionState(ExecutionState esFlags);
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct Rect { public int Left, Top, Right, Bottom; }
 }

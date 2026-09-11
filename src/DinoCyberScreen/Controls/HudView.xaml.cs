@@ -50,6 +50,20 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
     private async void Initialize(object sender, RoutedEventArgs e)
     {
         if (_ready || _disposed) return;
+        if (_previewMode)
+        {
+            try
+            {
+                var previewPath = Path.Combine(AppContext.BaseDirectory, "Web", "assets", "preview.png");
+                if (File.Exists(previewPath))
+                {
+                    var bitmap = new System.Windows.Media.Imaging.BitmapImage(new Uri(previewPath));
+                    PreviewImage.Source = bitmap;
+                    PreviewImage.Visibility = Visibility.Visible;
+                }
+            }
+            catch { }
+        }
         try
         {
             _telemetry = new TelemetryService();
@@ -85,8 +99,11 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         }
         catch (Exception ex)
         {
-            Fallback.Visibility = Visibility.Visible;
-            FallbackMessage.Text = "Microsoft Edge WebView2 Runtime konnte nicht initialisiert werden.\n" + ex.Message;
+            if (!_previewMode)
+            {
+                Fallback.Visibility = Visibility.Visible;
+                FallbackMessage.Text = "Microsoft Edge WebView2 Runtime konnte nicht initialisiert werden.\n" + ex.Message;
+            }
         }
     }
 

@@ -15,6 +15,8 @@ public partial class ScreensaverWindow : Window
     private System.Drawing.Rectangle _bounds;
     private DispatcherTimer? _previewWatchdog;
     private DispatcherTimer _cursorTimer;
+    private System.Windows.Point _initialMousePos;
+    private bool _hasMouseMoved;
     private bool _closing;
 
     public event EventHandler? ExitRequested;
@@ -26,10 +28,12 @@ public partial class ScreensaverWindow : Window
         WindowState = System.Windows.WindowState.Normal;
         _bounds = bounds;
         this.Cursor = System.Windows.Input.Cursors.None;
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
         _cursorTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = TimeSpan.FromSeconds(2.5) };
         _cursorTimer.Tick += (_, _) =>
         {
             this.Cursor = System.Windows.Input.Cursors.None;
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
             _cursorTimer.Stop();
         };
         
@@ -51,8 +55,13 @@ public partial class ScreensaverWindow : Window
         _previewParent = previewParent;
         Topmost = false;
         this.Cursor = System.Windows.Input.Cursors.None;
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
         _cursorTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = TimeSpan.FromSeconds(2.5) };
-        _cursorTimer.Tick += (_, _) => { this.Cursor = System.Windows.Input.Cursors.None; _cursorTimer.Stop(); };
+        _cursorTimer.Tick += (_, _) => {
+            this.Cursor = System.Windows.Input.Cursors.None;
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+            _cursorTimer.Stop();
+        };
         Hud.Configure(settingsService, previewMode: true);
     }
 
@@ -61,6 +70,16 @@ public partial class ScreensaverWindow : Window
         Loaded += (_, _) =>
         {
             Focus();
+            _initialMousePos = Mouse.GetPosition(this);
+            this.Cursor = System.Windows.Input.Cursors.None;
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+            if (_previewParent == IntPtr.Zero)
+            {
+                NativeMethods.SetThreadExecutionState(
+                    NativeMethods.ExecutionState.EsContinuous |
+                    NativeMethods.ExecutionState.EsDisplayRequired |
+                    NativeMethods.ExecutionState.EsSystemRequired);
+            }
         };
         MouseMove += OnMouseMove;
         MouseDown += (_, _) => RequestExit();
@@ -71,12 +90,21 @@ public partial class ScreensaverWindow : Window
 
     private void OnMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        if (this.Cursor != System.Windows.Input.Cursors.Arrow)
+        var currentPos = e.GetPosition(this);
+        if (!_hasMouseMoved)
         {
-            this.Cursor = System.Windows.Input.Cursors.Arrow;
+            if (Math.Abs(currentPos.X - _initialMousePos.X) < 8 && Math.Abs(currentPos.Y - _initialMousePos.Y) < 8)
+            {
+                this.Cursor = System.Windows.Input.Cursors.None;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
+                return;
+            }
+            _hasMouseMoved = true;
         }
+
+        this.Cursor = System.Windows.Input.Cursors.Arrow;
+        Mouse.OverrideCursor = null;
         _cursorTimer.Stop();
-        _cursorTimer.Start();
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -127,6 +155,7 @@ public partial class ScreensaverWindow : Window
     {
         if (_previewParent != IntPtr.Zero || _closing) return;
         _closing = true;
+        Mouse.OverrideCursor = null;
         this.Cursor = System.Windows.Input.Cursors.Arrow;
         ExitRequested?.Invoke(this, EventArgs.Empty);
     }
@@ -134,7 +163,12 @@ public partial class ScreensaverWindow : Window
     protected override void OnClosed(EventArgs e)
     {
         _cursorTimer.Stop();
+        Mouse.OverrideCursor = null;
         this.Cursor = System.Windows.Input.Cursors.Arrow;
+        if (_previewParent == IntPtr.Zero)
+        {
+            NativeMethods.SetThreadExecutionState(NativeMethods.ExecutionState.EsContinuous);
+        }
         _previewWatchdog?.Stop();
         Hud.Dispose();
         base.OnClosed(e);
