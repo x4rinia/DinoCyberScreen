@@ -19,37 +19,39 @@ initializeCharts();initializeNetwork();initializeCore();initializeStreams();init
 
 const coreBars=$('#coreBars');for(let i=0;i<16;i++)coreBars.append(document.createElement('i'));
 
+window.addEventListener('mousemove', () => document.body.classList.add('show-cursor'));
 $('#modeNav').addEventListener('click',event=>{const button=event.target.closest('button[data-mode]');if(button)setMode(button.dataset.mode,true)});
 $('#settingsButton').addEventListener('click',()=>window.chrome?.webview?.postMessage({command:'openSettings'}));
 
 function setMode(mode,manual=false){
-  const interval = getSettings().modeIntervalSeconds !== undefined ? getSettings().modeIntervalSeconds : 120;
   const index=modes.indexOf(mode);if(index<0||app.dataset.mode===mode)return;currentMode=index;
   app.dataset.mode=mode;document.querySelectorAll('#modeNav button').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode));
-  const trans = $('.transition');
-  if(trans) {
-    trans.classList.remove('run');
-    void trans.offsetWidth;
-    trans.classList.add('run');
-  }
-  nextModeAt = interval > 0 ? performance.now() + interval*1000 : Infinity;
 }
 
 let nextEventAt = performance.now() + 10000 + Math.random() * 20000;
+let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
+
 subscribeSettings(settings=>{
   const theme=String(settings.theme).toLowerCase()==='green'?'green':'blue';app.dataset.theme=theme;
   const background={"dark blue tint":"dark-blue","dark green tint":"dark-green"}[String(settings.backgroundStyle||'').toLowerCase()]||'pure-black';app.dataset.background=background;
   configureCore(settings);setNetworkQuality(settings.animationQuality);$('#qualityState').textContent=`${settings.targetFps||60} FPS / ${(settings.animationQuality||'High').toUpperCase()}`;
   $('#terminalPanel').classList.toggle('module-disabled',settings.showTerminal===false);$('#hexPanel').classList.toggle('module-disabled',settings.showHexStream===false);$('.core-panel').classList.toggle('module-disabled',settings.showDinoCore===false);
-  const interval = settings.modeIntervalSeconds !== undefined ? settings.modeIntervalSeconds : 120;
-  if (interval > 0) nextModeAt=performance.now()+interval*1000;
-  else { nextModeAt=Infinity; if (app.dataset.mode !== 'overview') setMode('overview'); }
+  setMode('overview');
 });
+
+function triggerDinoScanline() {
+  if (document.body.classList.contains('primary-multi')) return;
+  const scanline = $('#dinoScanline');
+  if (!scanline) return;
+  scanline.classList.remove('run');
+  void scanline.offsetWidth;
+  scanline.classList.add('run');
+}
 
 subscribe((data,delta)=>{
   const now=performance.now(),settings=getSettings();
-  if(now>nextModeAt){currentMode=(currentMode+1)%modes.length;setMode(modes[currentMode]);}
   if(settings.enableEvents !== false && now > nextEventAt) { triggerRandomAlarm(); nextEventAt = now + 120000 + Math.random() * 360000; }
+  if(now > nextScanlineAt) { triggerDinoScanline(); nextScanlineAt = now + 60000 + Math.random() * 120000; }
   drawNetwork(now,data);setCoreIntensity(Math.max(data.cpu.usage||0,data.gpu.usage||0));drawCore(now);updateCharts(data,now);updateStreams(data,now,settings);updateEvents(data,now,settings);
   if(now-lastUi>100){lastUi=now;renderTelemetry(data)}
   if(now-lastProcesses>900){lastProcesses=now;renderProcesses(data.processes||[])}
