@@ -1,11 +1,8 @@
-let log,overlay,progress,status,headline,node,lastRoutine=0,nextEvent=90000,eventActive=false,highLoadSince=0;
+let log,lastRoutine=0;
 const routine=[['INFO','SCAN','Threat scan complete — no threats'],['CORE','DINO','AI modules online (12/12)'],['INFO','NODE','Heartbeat received'],['SYS','SYSTEM','Configuration envelope verified'],['INFO','NETWORK','Route optimized'],['CORE','CORE','Node sync completed'],['INFO','UPDATE','Signatures current']];
 
-export function initializeEvents(){log=document.querySelector('#eventLog');overlay=document.querySelector('#eventOverlay');progress=document.querySelector('#eventProgress');status=document.querySelector('#eventStatus');headline=document.querySelector('#eventHeadline');node=document.querySelector('#eventNode');for(let i=0;i<8;i++){const r=routine[i%routine.length];addEvent(r[0],r[1],r[2])}}
+export function initializeEvents(){log=document.querySelector('#eventLog');for(let i=0;i<8;i++){const r=routine[i%routine.length];addEvent(r[0],r[1],r[2])}}
 function addEvent(level,source,message){if(!log)return;const row=document.createElement('div');row.className=`event-row ${level.toLowerCase()}`;row.innerHTML=`<span>${new Date().toLocaleTimeString('de-DE',{hour12:false})}</span><span class="level">${level}</span><span>${source} // ${message}</span>`;log.prepend(row);while(log.children.length>12)log.lastElementChild.remove()}
 export function updateEvents(data,now,settings){
   if(now-lastRoutine>4700+Math.random()*2200){lastRoutine=now;const r=routine[Math.floor(Math.random()*routine.length)];addEvent(r[0],r[1],r[2])}
-  if(settings.enableEvents===false||eventActive)return;const high=Math.max(data.cpu.usage||0,data.gpu.usage||0)>85||(data.cpu.temperature||0)>82||(data.gpu.temperature||0)>84;if(high){if(!highLoadSince)highLoadSince=now;if(now-highLoadSince>12000)triggerEvent('THERMAL LOAD DETECTED','SENSOR ENVELOPE')}else highLoadSince=0;
-  if(now>nextEvent)triggerEvent('ANOMALY DETECTED','NODE 03');
 }
-function triggerEvent(title,target){eventActive=true;headline.textContent=title;node.textContent=target;status.textContent='ANALYZING...';progress.style.width='0';overlay.classList.add('visible');overlay.setAttribute('aria-hidden','false');addEvent('WARN','CORE',title);let value=0;const timer=setInterval(()=>{value+=4+Math.random()*9;progress.style.width=Math.min(100,value)+'%';if(value>=100){clearInterval(timer);status.textContent='FALSE POSITIVE // SYSTEM SECURE';addEvent('CORE','SECURITY','Analysis complete — system secure');setTimeout(()=>{overlay.classList.remove('visible');overlay.setAttribute('aria-hidden','true');eventActive=false;nextEvent=performance.now()+120000+Math.random()*120000;highLoadSince=0},2200)}},170)}
