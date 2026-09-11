@@ -256,22 +256,43 @@ button { font: inherit; }
 @keyframes orbFloat6 { 0%,100%{transform:translate(-50%,-50%) translateY(0) scale(1)} 50%{transform:translate(-50%,-50%) translateY(14px) scale(0.8)} }
 
 /* Dino hologram – RADIAL MASK hides JPEG rect edges, reduced brightness */
-.dino-hologram {
+/* === DINO HOLOGRAM – two-tone: primary top, secondary bottom === */
+.dino-hologram, .dino-hologram-2 {
   position:absolute;z-index:2;left:50%;top:50%;
   width:min(74%,420px);height:min(74%,420px);
   object-fit:contain;object-position:center center;
-  transform:translate(-50%,-50%);opacity:.85;
+  transform:translate(-50%,-50%);
   mix-blend-mode:screen;
-  mask-image:radial-gradient(ellipse 80% 80% at center, black 48%, transparent 78%);
-  -webkit-mask-image:radial-gradient(ellipse 80% 80% at center, black 48%, transparent 78%);
   animation:dinoPulse 5s ease-in-out infinite;pointer-events:none;
 }
-/* Cyan source (~180°) → theme color via hue-rotate. Brightness kept low to avoid bloom. */
-.app[data-theme="blue"]  .dino-hologram, body[data-theme="blue"]  .dino-hologram { filter: hue-rotate(0deg)    saturate(1.5) brightness(0.95) drop-shadow(0 0 16px rgba(38,217,255,.7))   !important; }
-.app[data-theme="green"] .dino-hologram, body[data-theme="green"] .dino-hologram { filter: hue-rotate(-60deg)  saturate(2.4) brightness(0.95) drop-shadow(0 0 16px rgba(77,255,136,.7))   !important; }
-.app[data-theme="red"]   .dino-hologram, body[data-theme="red"]   .dino-hologram { filter: hue-rotate(180deg)  saturate(3.0) brightness(0.9)  sepia(0.15) drop-shadow(0 0 16px rgba(255,59,92,.7))   !important; }
-.app[data-theme="white"] .dino-hologram, body[data-theme="white"] .dino-hologram { filter: grayscale(1) saturate(0) brightness(1.4) drop-shadow(0 0 16px rgba(255,255,255,.75)) !important; }
-.app[data-theme="pink"]  .dino-hologram, body[data-theme="pink"]  .dino-hologram { filter: hue-rotate(120deg)  saturate(2.8) brightness(0.9)  drop-shadow(0 0 16px rgba(255,102,204,.7)) !important; }
+/* Primary layer – upper portion visible */
+.dino-hologram {
+  opacity:.82;
+  mask-image:radial-gradient(ellipse 80% 80% at center, black 20%, transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at center, black 20%, transparent 72%);
+}
+/* Secondary layer – lower/outer ring */
+.dino-hologram-2 {
+  opacity:.55;
+  mask-image:radial-gradient(ellipse 80% 80% at center, transparent 28%, black 55%, transparent 76%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 80% at center, transparent 28%, black 55%, transparent 76%);
+}
+/* === Per-theme filters (cyan source ~180°) === */
+/* BLUE: stays cyan */
+.app[data-theme="blue"]  .dino-hologram,  body[data-theme="blue"]  .dino-hologram  { filter: hue-rotate(0deg)   saturate(1.5) brightness(0.95) drop-shadow(0 0 14px rgba(38,217,255,.65))  !important; }
+.app[data-theme="blue"]  .dino-hologram-2, body[data-theme="blue"]  .dino-hologram-2 { filter: hue-rotate(25deg)  saturate(1.2) brightness(0.85) !important; }
+/* GREEN: cyan→green (-60°), secondary lime/yellow */
+.app[data-theme="green"] .dino-hologram,  body[data-theme="green"] .dino-hologram  { filter: hue-rotate(-60deg) saturate(2.4) brightness(0.95) drop-shadow(0 0 14px rgba(77,255,136,.65))  !important; }
+.app[data-theme="green"] .dino-hologram-2, body[data-theme="green"] .dino-hologram-2 { filter: hue-rotate(-100deg) saturate(2.8) brightness(0.85) !important; }
+/* RED: cyan→red (+180°) primary, cyan→orange secondary */
+.app[data-theme="red"]   .dino-hologram,  body[data-theme="red"]   .dino-hologram  { filter: hue-rotate(180deg) saturate(3.0) brightness(0.88) sepia(0.1) drop-shadow(0 0 14px rgba(255,59,92,.65))  !important; }
+.app[data-theme="red"]   .dino-hologram-2, body[data-theme="red"]   .dino-hologram-2 { filter: hue-rotate(145deg) saturate(2.4) brightness(0.85) !important; }
+/* WHITE: greyscale, secondary silver-grey */
+.app[data-theme="white"] .dino-hologram,  body[data-theme="white"] .dino-hologram  { filter: grayscale(1) saturate(0) brightness(1.4) drop-shadow(0 0 14px rgba(255,255,255,.7)) !important; }
+.app[data-theme="white"] .dino-hologram-2, body[data-theme="white"] .dino-hologram-2 { filter: grayscale(1) saturate(0) brightness(0.95) !important; }
+/* PINK: cyan→magenta (+120°) primary, cyan→purple (+145°) secondary */
+.app[data-theme="pink"]  .dino-hologram,  body[data-theme="pink"]  .dino-hologram  { filter: hue-rotate(120deg) saturate(2.8) brightness(0.88) drop-shadow(0 0 14px rgba(255,102,204,.65)) !important; }
+.app[data-theme="pink"]  .dino-hologram-2, body[data-theme="pink"]  .dino-hologram-2 { filter: hue-rotate(155deg) saturate(2.5) brightness(0.85) !important; }
 @keyframes dinoPulse { 0%,100%{opacity:.78;transform:translate(-50%,-50%) scale(.985)}50%{opacity:.88;transform:translate(-50%,-50%) scale(1.02)} }
 
 /* Callout labels with connector lines */
@@ -279,12 +300,12 @@ button { font: inherit; }
 .core-callout { position:absolute;display:flex;align-items:center;gap:0; }
 .core-callout.left  { flex-direction:row; }
 .core-callout.right { flex-direction:row-reverse; }
-.core-callout-dot  { width:5px;height:5px;border-radius:50%;background:var(--primary);box-shadow:0 0 6px rgba(var(--primary-rgb),.8);flex-shrink:0; }
-.core-callout-line { height:1px;width:36px;background:linear-gradient(to right,rgba(var(--primary-rgb),.8),rgba(var(--primary-rgb),.2));flex-shrink:0; }
-.core-callout.right .core-callout-line { background:linear-gradient(to left,rgba(var(--primary-rgb),.8),rgba(var(--primary-rgb),.2)); }
-.core-callout-text { font-size:.52em;letter-spacing:.1em;color:var(--primary);opacity:.7;white-space:nowrap;padding:0 5px; font-family:"Bahnschrift",sans-serif; }
-.core-callout:nth-child(1) { top:34%; left:10%; animation:calloutFade 6s ease-in-out infinite; }
-.core-callout:nth-child(2) { top:58%; right:10%; left:auto; animation:calloutFade 9s ease-in-out infinite reverse; }
+.core-callout-dot  { width:6px;height:6px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px rgba(var(--primary-rgb),.9);flex-shrink:0; }
+.core-callout-line { height:1px;width:28px;background:linear-gradient(to right,rgba(var(--primary-rgb),.85),rgba(var(--primary-rgb),.2));flex-shrink:0; }
+.core-callout.right .core-callout-line { background:linear-gradient(to left,rgba(var(--primary-rgb),.85),rgba(var(--primary-rgb),.2)); }
+.core-callout-text { font-size:.68em;letter-spacing:.09em;color:var(--primary);opacity:.75;white-space:nowrap;padding:0 5px; font-family:"Bahnschrift",sans-serif; }
+.core-callout:nth-child(1) { top:36%; left:22%; animation:calloutFade 6s ease-in-out infinite; }
+.core-callout:nth-child(2) { top:60%; right:20%; left:auto; animation:calloutFade 9s ease-in-out infinite reverse; }
 @keyframes calloutFade { 0%,100%{opacity:.55} 50%{opacity:.9} }
 .core-title { position:absolute; z-index:3; top:8%; left:50%; transform:translateX(-50%); text-align:center; pointer-events:none; }
 .core-title h1 { margin:0; color:var(--text); font-family:"Bahnschrift",sans-serif; font-size:clamp(15px,1.4vw,27px); letter-spacing:.22em; font-weight:600; white-space:nowrap; }

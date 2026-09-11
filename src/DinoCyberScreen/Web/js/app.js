@@ -41,21 +41,27 @@ subscribeSettings(settings=>{
   
   const specimen = String(settings.dinoSpecimen || 'ankylo').toLowerCase();
   const holoImg = $('.dino-hologram');
+  const holoImg2 = $('.dino-hologram-2');
   const coreTitle = $('#coreTitle');
   if (specimen === 'triceratops') {
     if (holoImg) holoImg.src = 'assets/triceratops-hologram.png';
+    if (holoImg2) holoImg2.src = 'assets/triceratops-hologram.png';
     if (coreTitle) coreTitle.textContent = 'TRICERA CORE';
   } else if (specimen === 'raptor') {
     if (holoImg) holoImg.src = 'assets/raptor-hologram.png';
+    if (holoImg2) holoImg2.src = 'assets/raptor-hologram.png';
     if (coreTitle) coreTitle.textContent = 'VELO CORE';
   } else if (specimen === 'stego') {
     if (holoImg) holoImg.src = 'assets/stego-hologram.png';
+    if (holoImg2) holoImg2.src = 'assets/stego-hologram.png';
     if (coreTitle) coreTitle.textContent = 'STEGO CORE';
   } else if (specimen === 'ptero' || specimen === 'pterodactylus' || specimen === 'pterodax') {
     if (holoImg) holoImg.src = 'assets/ptero-hologram.png';
+    if (holoImg2) holoImg2.src = 'assets/ptero-hologram.png';
     if (coreTitle) coreTitle.textContent = 'PTERO CORE';
   } else {
     if (holoImg) holoImg.src = 'assets/ankylo-hologram.png';
+    if (holoImg2) holoImg2.src = 'assets/ankylo-hologram.png';
     if (coreTitle) coreTitle.textContent = 'ANKYLO CORE';
   }
 
@@ -159,8 +165,11 @@ function initBinaryRain() {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
         ctx.fillRect(0, 0, width, height);
         
-        const isGreen = document.body.dataset.theme === 'green' || document.querySelector('.app').dataset.theme === 'green';
-        ctx.fillStyle = isGreen ? '#5cff9c' : '#26d9ff';
+        // Read primary color from CSS variables so it always matches the active theme
+        const appEl = document.querySelector('.app') || document.body;
+        const themeStyle = getComputedStyle(appEl);
+        const primaryHex = themeStyle.getPropertyValue('--primary').trim() || '#26d9ff';
+        ctx.fillStyle = primaryHex;
         ctx.font = fontSize + 'px monospace';
         
         for (let i = 0; i < drops.length; i++) {
