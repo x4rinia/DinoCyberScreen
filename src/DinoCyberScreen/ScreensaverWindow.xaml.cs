@@ -12,7 +12,7 @@ namespace DinoCyberScreen;
 public partial class ScreensaverWindow : Window
 {
     private readonly IntPtr _previewParent;
-    private readonly DateTime _inputEnabledAt = DateTime.UtcNow.AddSeconds(1.5);
+    private DateTime _inputEnabledAt = DateTime.UtcNow.AddSeconds(2.5);
     private System.Windows.Point? _initialMousePosition;
     private DispatcherTimer? _previewWatchdog;
     private bool _closing;
@@ -45,6 +45,7 @@ public partial class ScreensaverWindow : Window
     {
         Loaded += (_, _) =>
         {
+            _inputEnabledAt = DateTime.UtcNow.AddSeconds(2.0);
             _initialMousePosition = Mouse.GetPosition(this);
             Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
             Focus();

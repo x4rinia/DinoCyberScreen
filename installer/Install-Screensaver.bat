@@ -1,8 +1,8 @@
 @echo off
 setlocal EnableExtensions
 
-rem Append a dot so the quoted source never ends with a backslash (Robocopy parsing).
-set "SOURCE=%~dp0."
+rem Pfad zum Dino_SCR Ordner
+set "SOURCE=%~dp0..\Dino_SCR"
 set "INSTALL=%SystemRoot%\Dino_SCR"
 set "SYSTEM_SCR=%SystemRoot%\System32\DinoCyberScreen.scr"
 
@@ -22,6 +22,10 @@ if /I not "%INSTALL%"=="%SystemRoot%\Dino_SCR" (
   echo FEHLER: Unerwarteter Installationspfad: "%INSTALL%"
   exit /b 2
 )
+
+echo Beende laufende Bildschirmschoner-Prozesse...
+powershell -Command "Get-Process | Where-Object { $_.Name -like '*DinoCyber*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+timeout /t 2 /nobreak >nul
 
 if not exist "%SOURCE%\DinoCyberScreen.exe" (
   echo FEHLER: DinoCyberScreen.exe fehlt im Release-Ordner.
