@@ -29,7 +29,7 @@ public partial class SettingsWindow : Window
         Select(MonitorCombo, settings.AllMonitors ? "all" : "primary", useTag: true);
         Select(FpsCombo, settings.TargetFps.ToString(), useTag: false);
         Select(QualityCombo, settings.AnimationQuality, useTag: false);
-        Select(ModeCombo, settings.ModeIntervalSeconds.ToString(), useTag: true);
+        Select(DinoCombo, settings.DinoSpecimen, useTag: true);
         Select(ThemeCombo, settings.Theme, useTag: false);
         Select(BackgroundCombo, settings.BackgroundStyle, useTag: false);
     }
@@ -48,7 +48,7 @@ public partial class SettingsWindow : Window
             AllMonitors = Selected(MonitorCombo, true) == "all",
             TargetFps = int.TryParse(Selected(FpsCombo, false), out var fps) ? fps : 60,
             AnimationQuality = Selected(QualityCombo, false),
-            ModeIntervalSeconds = int.TryParse(Selected(ModeCombo, true), out var seconds) ? seconds : 120,
+            DinoSpecimen = Selected(DinoCombo, true),
             Theme = Selected(ThemeCombo, false),
             BackgroundStyle = Selected(BackgroundCombo, false)
         });

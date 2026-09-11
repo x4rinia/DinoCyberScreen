@@ -15,4 +15,5 @@ public sealed class AppSettings
     public int ModeIntervalSeconds { get; set; } = 120;
     public string Theme { get; set; } = "Blue";
     public string BackgroundStyle { get; set; } = "Pure Black";
+    public string DinoSpecimen { get; set; } = "ankylo";
 }

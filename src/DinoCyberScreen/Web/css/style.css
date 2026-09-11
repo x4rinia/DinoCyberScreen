@@ -51,6 +51,44 @@
   --hologram-hue: -68deg;
 }
 
+.app[data-theme="red"] {
+  --primary: #ff3b5c;
+  --primary-rgb: 255, 59, 92;
+  --secondary: #ff8c42;
+  --secondary-rgb: 255, 140, 66;
+  --tertiary: #ffc857;
+  --text: #ffe5ea;
+  --heading: #ffb8c4;
+  --metric-heading: #ffa3b3;
+  --text-medium: #e6a8b3;
+  --data-text: #d97384;
+  --muted: #a66f79;
+  --dim: #593138;
+  --hologram-hue: 160deg;
+  --grid-rgb: 255, 59, 92;
+  --ambient-rgb: 255, 59, 92;
+  --shadow-rgb: 255, 59, 92;
+}
+
+.app[data-theme="white"] {
+  --primary: #ffffff;
+  --primary-rgb: 255, 255, 255;
+  --secondary: #64e3ff;
+  --secondary-rgb: 100, 227, 255;
+  --tertiary: #b8f3ff;
+  --text: #ffffff;
+  --heading: #e6f7ff;
+  --metric-heading: #cceeff;
+  --text-medium: #b3c2cc;
+  --data-text: #99abb8;
+  --muted: #788a99;
+  --dim: #404d59;
+  --hologram-hue: 0deg;
+  --grid-rgb: 255, 255, 255;
+  --ambient-rgb: 255, 255, 255;
+  --shadow-rgb: 255, 255, 255;
+}
+
 .app[data-background="pure-black"] {
   --bg: #000000;
   --bg-deep: #000000;

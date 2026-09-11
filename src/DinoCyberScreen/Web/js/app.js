@@ -32,8 +32,26 @@ let nextEventAt = performance.now() + 10000 + Math.random() * 20000;
 let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
 
 subscribeSettings(settings=>{
-  const theme=String(settings.theme).toLowerCase()==='green'?'green':'blue';app.dataset.theme=theme;
+  const themeStr = String(settings.theme || 'blue').toLowerCase();
+  const theme = ['green', 'red', 'white'].includes(themeStr) ? themeStr : 'blue';
+  app.dataset.theme = theme;
+  
   const background={"dark blue tint":"dark-blue","dark green tint":"dark-green"}[String(settings.backgroundStyle||'').toLowerCase()]||'pure-black';app.dataset.background=background;
+  
+  const specimen = String(settings.dinoSpecimen || 'ankylo').toLowerCase();
+  const holoImg = $('.dino-hologram');
+  const coreTitle = $('#coreTitle');
+  if (specimen === 'triceratops') {
+    if (holoImg) holoImg.src = 'assets/triceratops-hologram.png';
+    if (coreTitle) coreTitle.textContent = 'TRICERA CORE';
+  } else if (specimen === 'raptor') {
+    if (holoImg) holoImg.src = 'assets/raptor-hologram.png';
+    if (coreTitle) coreTitle.textContent = 'RAPTOR CORE';
+  } else {
+    if (holoImg) holoImg.src = 'assets/ankylo-hologram.png';
+    if (coreTitle) coreTitle.textContent = 'DINO CORE';
+  }
+
   configureCore(settings);setNetworkQuality(settings.animationQuality);$('#qualityState').textContent=`${settings.targetFps||60} FPS / ${(settings.animationQuality||'High').toUpperCase()}`;
   $('#terminalPanel').classList.toggle('module-disabled',settings.showTerminal===false);$('#hexPanel').classList.toggle('module-disabled',settings.showHexStream===false);$('.core-panel').classList.toggle('module-disabled',settings.showDinoCore===false);
   setMode('overview');
