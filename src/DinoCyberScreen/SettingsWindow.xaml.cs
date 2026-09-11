@@ -21,6 +21,7 @@ public partial class SettingsWindow : Window
     {
         RealDataCheck.IsChecked = settings.ShowRealData;
         EventsCheck.IsChecked = settings.EnableEvents;
+        CustomNameText.Text = string.IsNullOrWhiteSpace(settings.CustomName) ? "DINO" : settings.CustomName;
         Select(MonitorCombo, settings.AllMonitors ? "all" : "primary", useTag: true);
         Select(FpsCombo, settings.TargetFps.ToString(), useTag: false);
         Select(QualityCombo, settings.AnimationQuality, useTag: false);
@@ -30,10 +31,18 @@ public partial class SettingsWindow : Window
 
     private void SaveClick(object sender, RoutedEventArgs e)
     {
+        var name = CustomNameText.Text?.Trim();
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            name = "DINO";
+            CustomNameText.Text = "DINO";
+        }
+
         _settingsService.Save(new AppSettings
         {
             ShowRealData = RealDataCheck.IsChecked == true,
             EnableEvents = EventsCheck.IsChecked == true,
+            CustomName = name,
             AllMonitors = Selected(MonitorCombo, true) == "all",
             TargetFps = int.TryParse(Selected(FpsCombo, false), out var fps) ? fps : 60,
             AnimationQuality = Selected(QualityCombo, false),

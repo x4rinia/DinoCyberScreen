@@ -16,4 +16,5 @@ public sealed class AppSettings
     public string Theme { get; set; } = "Blue";
     public string BackgroundStyle { get; set; } = "Pure Black";
     public string DinoSpecimen { get; set; } = "ankylo";
+    public string CustomName { get; set; } = "X4RINIA";
 }

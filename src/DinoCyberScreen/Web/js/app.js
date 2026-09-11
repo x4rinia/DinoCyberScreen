@@ -47,11 +47,15 @@ subscribeSettings(settings=>{
     if (coreTitle) coreTitle.textContent = 'TRICERA CORE';
   } else if (specimen === 'raptor') {
     if (holoImg) holoImg.src = 'assets/raptor-hologram.png';
-    if (coreTitle) coreTitle.textContent = 'RAPTOR CORE';
+    if (coreTitle) coreTitle.textContent = 'VELO CORE';
   } else {
     if (holoImg) holoImg.src = 'assets/ankylo-hologram.png';
-    if (coreTitle) coreTitle.textContent = 'DINO CORE';
+    if (coreTitle) coreTitle.textContent = 'ANKYLO CORE';
   }
+
+  const brandMark = $('#brandMark');
+  const customName = (settings.customName || '').trim() || 'DINO';
+  if (brandMark) brandMark.textContent = customName;
 
   configureCore(settings);setNetworkQuality(settings.animationQuality);$('#qualityState').textContent=`${settings.targetFps||60} FPS / ${(settings.animationQuality||'High').toUpperCase()}`;
   $('#terminalPanel').classList.toggle('module-disabled',settings.showTerminal===false);$('#hexPanel').classList.toggle('module-disabled',settings.showHexStream===false);$('.core-panel').classList.toggle('module-disabled',settings.showDinoCore===false);

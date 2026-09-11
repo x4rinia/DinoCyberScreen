@@ -222,6 +222,18 @@
             <Setter Property="Background" Value="#05090C" />
             <Setter Property="Foreground" Value="#174B5D" />
         </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Margin" Value="0,5,0,14" />
+            <Setter Property="Background" Value="#05090C" />
+            <Setter Property="Foreground" Value="#D9F5FF" />
+            <Setter Property="BorderBrush" Value="#237A91" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Cascadia Mono, Consolas" />
         </Style>
@@ -283,8 +295,10 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox Header="COLOR PROFILE">
+                <GroupBox Header="PERSONALIZATION &amp; COLOR PROFILE">
                     <StackPanel>
+                        <TextBlock Text="SYSTEM NAME (CANNOT BE EMPTY)" Foreground="#7895A4" FontSize="10" />
+                        <TextBox x:Name="CustomNameText" MaxLength="18" Margin="0,5,0,12" />
                         <TextBlock Text="THEME" Foreground="#7895A4" FontSize="10" />
                         <ComboBox x:Name="ThemeCombo" Margin="0,5,0,5">
                             <ComboBoxItem Content="Blue" />
