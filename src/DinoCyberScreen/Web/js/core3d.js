@@ -6,10 +6,10 @@ export function initializeCore(){canvas=document.querySelector('#coreCanvas');gl
 function createProgram(vs,fs){const compile=(type,source)=>{const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);return s};const p=gl.createProgram();gl.attachShader(p,compile(gl.VERTEX_SHADER,vs));gl.attachShader(p,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);return p}
 function rebuild(){if(!gl)return;const count=quality==='Low'?110:quality==='Medium'?180:280,nodes=[];for(let i=0;i<count;i++){const y=1-(i/(count-1))*2,r=Math.sqrt(1-y*y),theta=Math.PI*(3-Math.sqrt(5))*i;nodes.push([Math.cos(theta)*r,y,Math.sin(theta)*r])}const lines=[];const step=quality==='High'?7:11;for(let i=0;i<count;i++){for(const off of [1,step]){const a=nodes[i],b=nodes[(i+off)%count];lines.push(...a,...b)}}gl.bindBuffer(gl.ARRAY_BUFFER,pointBuffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(nodes.flat()),gl.STATIC_DRAW);pointCount=count;gl.bindBuffer(gl.ARRAY_BUFFER,lineBuffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(lines),gl.STATIC_DRAW);lineCount=lines.length/3}
 const THEME_COLORS = {
-  blue:  { primary: [.15, .85, 1.0], secondary: [.25, 1.0, .75] },
-  green: { primary: [.36, 1.0, .61], secondary: [.70, 1.0, .30] },
-  red:   { primary: [1.0, .23, .36], secondary: [1.0, .55, .26] },
-  white: { primary: [1.0, 1.0, 1.0], secondary: [.39, .89, 1.0] }
+  blue:  { primary: [.15, .85, 1.0], secondary: [.10, .46, 1.0] },
+  green: { primary: [.30, 1.0, .53], secondary: [.77, 1.0, .20] },
+  red:   { primary: [1.0, .23, .36], secondary: [1.0, .52, .20] },
+  white: { primary: [1.0, 1.0, 1.0], secondary: [.60, .84, 1.0] }
 };
 
 export function configureCore(settings){
