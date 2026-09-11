@@ -53,10 +53,13 @@ public partial class App : System.Windows.Application
     private void ShowScreensaver()
     {
         var settings = _settingsService!.Load();
-        var screens = settings.AllMonitors ? Forms.Screen.AllScreens : [Forms.Screen.PrimaryScreen!];
+        var screens = Forms.Screen.AllScreens;
         foreach (var screen in screens)
         {
-            var window = new ScreensaverWindow(_settingsService, screen.Bounds);
+            var isPrimary = screen.Primary;
+            var isBlank = !settings.AllMonitors && !isPrimary;
+            
+            var window = new ScreensaverWindow(_settingsService, screen.Bounds, isBlank);
             window.ExitRequested += ExitScreensaver;
             _windows.Add(window);
             window.Show();

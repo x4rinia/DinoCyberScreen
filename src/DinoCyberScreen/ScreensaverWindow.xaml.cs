@@ -20,13 +20,22 @@ public partial class ScreensaverWindow : Window
 
     public event EventHandler? ExitRequested;
 
-    public ScreensaverWindow(SettingsService settingsService, System.Drawing.Rectangle bounds)
+    public ScreensaverWindow(SettingsService settingsService, System.Drawing.Rectangle bounds, bool isBlank = false)
     {
         InitializeComponent();
         _previewParent = IntPtr.Zero;
         WindowState = System.Windows.WindowState.Normal;
         _bounds = bounds;
-        Hud.Configure(settingsService, previewMode: false);
+        
+        if (isBlank)
+        {
+            Hud.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            Hud.Configure(settingsService, previewMode: false);
+        }
+        
         AttachInputHandlers();
     }
 
