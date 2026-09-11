@@ -75,11 +75,11 @@ if (Test-Path -LiteralPath $absoluteDinoScr) {
 New-Item -ItemType Directory -Path $absoluteDinoScr | Out-Null
 
 # Copy only the runtime payload (no source files, no build artifacts, no docs)
-# Exclude: *.pdb, *.xml, *.bat, *.deps.json, *.runtimeconfig.json, Install/Uninstall scripts
+# Exclude: *.pdb, *.xml, *.bat, Install/Uninstall scripts
 & "$env:SystemRoot\System32\robocopy.exe" `
     $releaseDirectory $absoluteDinoScr `
     /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS /NP `
-    /XF "*.pdb" "*.xml" "*.bat" "*.deps.json" "*.runtimeconfig.json" | Out-Null
+    /XF "*.pdb" "*.xml" "*.bat" | Out-Null
 # robocopy exit codes 0-7 are success; 8+ indicate errors
 if ($LASTEXITCODE -ge 8) { throw "robocopy failed copying to Dino_SCR (exit $LASTEXITCODE)" }
 

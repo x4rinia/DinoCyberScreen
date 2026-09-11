@@ -66,7 +66,8 @@
                                               IsHitTestVisible="False"
                                               Content="{TemplateBinding SelectionBoxItem}"
                                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" />
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              TextBlock.Foreground="{TemplateBinding Foreground}" />
                             <Popup x:Name="DropDownPopup"
                                    Placement="Bottom"
                                    AllowsTransparency="True"
