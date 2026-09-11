@@ -20,12 +20,7 @@ public partial class SettingsWindow : Window
     private void LoadSettings(AppSettings settings)
     {
         RealDataCheck.IsChecked = settings.ShowRealData;
-        GpuDataCheck.IsChecked = settings.ShowGpuData;
-        NetworkDataCheck.IsChecked = settings.ShowNetworkData;
-        TerminalCheck.IsChecked = settings.ShowTerminal;
-        HexCheck.IsChecked = settings.ShowHexStream;
         EventsCheck.IsChecked = settings.EnableEvents;
-        DinoCoreCheck.IsChecked = settings.ShowDinoCore;
         Select(MonitorCombo, settings.AllMonitors ? "all" : "primary", useTag: true);
         Select(FpsCombo, settings.TargetFps.ToString(), useTag: false);
         Select(QualityCombo, settings.AnimationQuality, useTag: false);
@@ -38,12 +33,7 @@ public partial class SettingsWindow : Window
         _settingsService.Save(new AppSettings
         {
             ShowRealData = RealDataCheck.IsChecked == true,
-            ShowGpuData = GpuDataCheck.IsChecked == true,
-            ShowNetworkData = NetworkDataCheck.IsChecked == true,
-            ShowTerminal = TerminalCheck.IsChecked == true,
-            ShowHexStream = HexCheck.IsChecked == true,
             EnableEvents = EventsCheck.IsChecked == true,
-            ShowDinoCore = DinoCoreCheck.IsChecked == true,
             AllMonitors = Selected(MonitorCombo, true) == "all",
             TargetFps = int.TryParse(Selected(FpsCombo, false), out var fps) ? fps : 60,
             AnimationQuality = Selected(QualityCombo, false),

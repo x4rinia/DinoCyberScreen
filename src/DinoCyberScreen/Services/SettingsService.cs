@@ -28,7 +28,6 @@ public sealed class SettingsService
             var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_settingsPath), _jsonOptions)
                            ?? new AppSettings();
             settings.Theme = NormalizeTheme(settings.Theme);
-            settings.BackgroundStyle = NormalizeBackgroundStyle(settings.BackgroundStyle);
             return settings;
         }
         catch
@@ -40,20 +39,17 @@ public sealed class SettingsService
     public void Save(AppSettings settings)
     {
         settings.Theme = NormalizeTheme(settings.Theme);
-        settings.BackgroundStyle = NormalizeBackgroundStyle(settings.BackgroundStyle);
         var temporaryPath = _settingsPath + ".tmp";
         File.WriteAllText(temporaryPath, JsonSerializer.Serialize(settings, _jsonOptions));
         File.Move(temporaryPath, _settingsPath, true);
     }
 
     private static string NormalizeTheme(string? theme) =>
-        string.Equals(theme, "Green", StringComparison.OrdinalIgnoreCase) ? "Green" : "Blue";
-
-    private static string NormalizeBackgroundStyle(string? backgroundStyle) =>
-        backgroundStyle?.Trim().ToLowerInvariant() switch
+        theme?.Trim().ToLowerInvariant() switch
         {
-            "dark blue tint" => "Dark Blue Tint",
-            "dark green tint" => "Dark Green Tint",
-            _ => "Pure Black"
+            "green" => "Green",
+            "red" => "Red",
+            "white" => "White",
+            _ => "Blue"
         };
 }

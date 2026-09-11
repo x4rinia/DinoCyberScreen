@@ -57,7 +57,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
                 var previewPath = Path.Combine(AppContext.BaseDirectory, "Web", "assets", "preview.png");
                 if (File.Exists(previewPath))
                 {
-                    var bitmap = new System.Windows.Media.Imaging.BitmapImage(new Uri(previewPath));
+                    var bitmap = new System.Windows.Media.Imaging.BitmapImage(new Uri(previewPath, UriKind.Absolute));
                     PreviewImage.Source = bitmap;
                     PreviewImage.Visibility = Visibility.Visible;
                 }
