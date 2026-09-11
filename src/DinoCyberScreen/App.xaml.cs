@@ -57,9 +57,10 @@ public partial class App : System.Windows.Application
         foreach (var screen in screens)
         {
             var isPrimary = screen.Primary;
+            var isSecondary = settings.AllMonitors && !isPrimary;
             var isBlank = !settings.AllMonitors && !isPrimary;
             
-            var window = new ScreensaverWindow(_settingsService, screen.Bounds, isBlank);
+            var window = new ScreensaverWindow(_settingsService, screen.Bounds, isBlank, isSecondary);
             window.ExitRequested += ExitScreensaver;
             _windows.Add(window);
             window.Show();

@@ -230,3 +230,11 @@ button { font: inherit; }
 
 .binary-rain { display: none; }
 .secondary-monitor .binary-rain { display: block; position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; opacity: 0.15; pointer-events: none; filter: drop-shadow(0 0 5px rgba(var(--primary-rgb), 0.5)); }
+
+/* Hide cursor globally */
+body, * { cursor: none !important; }
+
+/* Clock Visibility */
+.core-clock { display: none; }
+.single-monitor .core-clock { display: block; }
+.secondary-monitor .core-clock { display: block; }

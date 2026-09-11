@@ -20,7 +20,7 @@ public partial class ScreensaverWindow : Window
 
     public event EventHandler? ExitRequested;
 
-    public ScreensaverWindow(SettingsService settingsService, System.Drawing.Rectangle bounds, bool isBlank = false)
+    public ScreensaverWindow(SettingsService settingsService, System.Drawing.Rectangle bounds, bool isBlank = false, bool isSecondary = false)
     {
         InitializeComponent();
         _previewParent = IntPtr.Zero;
@@ -33,7 +33,7 @@ public partial class ScreensaverWindow : Window
         }
         else
         {
-            Hud.Configure(settingsService, previewMode: false);
+            Hud.Configure(settingsService, previewMode: false, isSecondary: isSecondary);
         }
         
         AttachInputHandlers();
@@ -60,6 +60,7 @@ public partial class ScreensaverWindow : Window
         MouseDown += (_, _) => RequestExit();
         KeyDown += (_, _) => RequestExit();
         PreviewKeyDown += (_, _) => RequestExit();
+        Hud.ExitRequested += (_, _) => RequestExit();
     }
 
     private void OnMouseMove(object sender, System.Windows.Input.MouseEventArgs e)

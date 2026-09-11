@@ -17,10 +17,12 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
     private SettingsService? _settingsService;
     private AppSettings _settings = new();
     private bool _previewMode;
+    private bool _isSecondary;
     private bool _ready;
     private bool _disposed;
 
     public event EventHandler? SettingsRequested;
+    public event EventHandler? ExitRequested;
 
     public HudView()
     {
@@ -30,10 +32,11 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         Loaded += Initialize;
     }
 
-    public void Configure(SettingsService settingsService, bool previewMode)
+    public void Configure(SettingsService settingsService, bool previewMode, bool isSecondary = false)
     {
         _settingsService = settingsService;
         _previewMode = previewMode;
+        _isSecondary = isSecondary;
         _settings = settingsService.Load();
     }
 
@@ -67,7 +70,13 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             if (!Directory.Exists(webRoot)) throw new DirectoryNotFoundException($"Web assets not found: {webRoot}");
             Browser.CoreWebView2.SetVirtualHostNameToFolderMapping(
                 "dinocore.local", webRoot, CoreWebView2HostResourceAccessKind.DenyCors);
-            Browser.Source = new Uri("https://dinocore.local/index.html");
+            
+            var isSingleMonitor = System.Windows.Forms.Screen.AllScreens.Length == 1 || !_settings.AllMonitors;
+            var url = "https://dinocore.local/index.html";
+            if (_isSecondary) url += "?secondary=1";
+            else if (isSingleMonitor) url += "?singleMonitor=1";
+            else url += "?primary=1";
+            Browser.Source = new Uri(url);
         }
         catch (Exception ex)
         {
@@ -107,6 +116,8 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             var command = document.RootElement.TryGetProperty("command", out var value) ? value.GetString() : null;
             if (command == "openSettings" && !_previewMode)
                 SettingsRequested?.Invoke(this, EventArgs.Empty);
+            else if (command == "exit")
+                ExitRequested?.Invoke(this, EventArgs.Empty);
         }
         catch { }
     }

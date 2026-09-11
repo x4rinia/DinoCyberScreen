@@ -9,9 +9,10 @@ const $ = selector => document.querySelector(selector);
 const app=$('#app'), modes=['system','network','dino','data','overview'];
 let currentMode=4,nextModeAt=performance.now()+120000,lastUi=0,lastProcesses=0;
 
-if (new URLSearchParams(window.location.search).get('secondary') === '1') {
-    document.body.classList.add('secondary-monitor');
-}
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('secondary') === '1') document.body.classList.add('secondary-monitor');
+if (urlParams.get('singleMonitor') === '1') document.body.classList.add('single-monitor');
+if (urlParams.get('primary') === '1') document.body.classList.add('primary-monitor');
 
 initializeCharts();initializeNetwork();initializeCore();initializeStreams();initializeEvents();
 
@@ -21,26 +22,39 @@ $('#modeNav').addEventListener('click',event=>{const button=event.target.closest
 $('#settingsButton').addEventListener('click',()=>window.chrome?.webview?.postMessage({command:'openSettings'}));
 
 function setMode(mode,manual=false){
-  const index=modes.indexOf(mode);if(index<0||app.dataset.mode===mode)return;currentMode=index;const transition=$('#transition');transition.classList.remove('run');void transition.offsetWidth;transition.classList.add('run');
-  setTimeout(()=>{app.dataset.mode=mode;document.querySelectorAll('#modeNav button').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode))},260);
-  if(manual)nextModeAt=performance.now()+(getSettings().modeIntervalSeconds||120)*1000;
+  const interval = getSettings().modeIntervalSeconds !== undefined ? getSettings().modeIntervalSeconds : 120;
+  const index=modes.indexOf(mode);if(index<0||app.dataset.mode===mode)return;currentMode=index;
+  app.dataset.mode=mode;document.querySelectorAll('#modeNav button').forEach(button=>button.classList.toggle('active',button.dataset.mode===mode));
+  nextModeAt = interval > 0 ? performance.now() + interval*1000 : Infinity;
 }
 
+let nextEventAt = performance.now() + 10000 + Math.random() * 20000;
 subscribeSettings(settings=>{
   const theme=String(settings.theme).toLowerCase()==='green'?'green':'blue';app.dataset.theme=theme;
   const background={"dark blue tint":"dark-blue","dark green tint":"dark-green"}[String(settings.backgroundStyle||'').toLowerCase()]||'pure-black';app.dataset.background=background;
   configureCore(settings);setNetworkQuality(settings.animationQuality);$('#qualityState').textContent=`${settings.targetFps||60} FPS / ${(settings.animationQuality||'High').toUpperCase()}`;
   $('#terminalPanel').classList.toggle('module-disabled',settings.showTerminal===false);$('#hexPanel').classList.toggle('module-disabled',settings.showHexStream===false);$('.core-panel').classList.toggle('module-disabled',settings.showDinoCore===false);
-  nextModeAt=performance.now()+(settings.modeIntervalSeconds||120)*1000;
+  const interval = settings.modeIntervalSeconds !== undefined ? settings.modeIntervalSeconds : 120;
+  if (interval > 0) nextModeAt=performance.now()+interval*1000;
+  else { nextModeAt=Infinity; if (app.dataset.mode !== 'overview') setMode('overview'); }
 });
 
 subscribe((data,delta)=>{
   const now=performance.now(),settings=getSettings();
-  if(now>nextModeAt){currentMode=(currentMode+1)%modes.length;setMode(modes[currentMode]);nextModeAt=now+(settings.modeIntervalSeconds||120)*1000}
+  if(now>nextModeAt){currentMode=(currentMode+1)%modes.length;setMode(modes[currentMode]);}
+  if(settings.enableEvents !== false && now > nextEventAt) { triggerRandomAlarm(); nextEventAt = now + 120000 + Math.random() * 360000; }
   drawNetwork(now,data);setCoreIntensity(Math.max(data.cpu.usage||0,data.gpu.usage||0));drawCore(now);updateCharts(data,now);updateStreams(data,now,settings);updateEvents(data,now,settings);
   if(now-lastUi>100){lastUi=now;renderTelemetry(data)}
   if(now-lastProcesses>900){lastProcesses=now;renderProcesses(data.processes||[])}
 });
+
+function triggerRandomAlarm() {
+  const overlay = $('#eventOverlay');
+  if(overlay) {
+    overlay.classList.add('visible');
+    setTimeout(() => overlay.classList.remove('visible'), 4000);
+  }
+}
 
 function renderTelemetry(data){
   const date=data.timestamp?new Date(data.timestamp):new Date();
@@ -64,7 +78,11 @@ function setValue(selector,value){$(selector).textContent=value}
 function setWidth(selector,value){$(selector).style.width=Math.max(0,Math.min(100,value||0))+'%'}
 function escapeHtml(value){return String(value??'').replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
 
-window.addEventListener('keydown',event=>{if(event.key==='ArrowRight')setMode(modes[(modes.indexOf(app.dataset.mode)+1)%modes.length],true);if(event.key==='ArrowLeft')setMode(modes[(modes.indexOf(app.dataset.mode)+modes.length-1)%modes.length],true)});
+window.addEventListener('keydown',event=>{
+  if(event.key==='Enter' || event.key==='Escape') window.chrome?.webview?.postMessage({command:'exit'});
+  if(event.key==='ArrowRight')setMode(modes[(modes.indexOf(app.dataset.mode)+1)%modes.length],true);
+  if(event.key==='ArrowLeft')setMode(modes[(modes.indexOf(app.dataset.mode)+modes.length-1)%modes.length],true);
+});
 
 // Matrix Binary Rain for Secondary Monitor
 function initBinaryRain() {

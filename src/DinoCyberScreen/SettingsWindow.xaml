@@ -280,6 +280,7 @@
                             </ComboBox>
                             <TextBlock Text="MODE WECHSEL" Foreground="#7895A4" FontSize="10" />
                             <ComboBox x:Name="ModeCombo">
+                                <ComboBoxItem Content="Nie (Fixiert)" Tag="-1" />
                                 <ComboBoxItem Content="30 Sekunden" Tag="30" />
                                 <ComboBoxItem Content="60 Sekunden" Tag="60" />
                                 <ComboBoxItem Content="120 Sekunden" Tag="120" />
