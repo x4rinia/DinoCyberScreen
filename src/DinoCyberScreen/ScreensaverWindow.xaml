@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:DinoCyberScreen.Controls"
         Title="DinoCyberScreen"
         WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="False"
-        Background="#000000" Topmost="True">
+        Background="#000000" Topmost="True" Cursor="None">
     <Grid>
         <controls:HudView x:Name="Hud" IsHitTestVisible="False" />
     </Grid>

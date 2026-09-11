@@ -48,13 +48,25 @@ subscribe((data,delta)=>{
   if(now-lastProcesses>900){lastProcesses=now;renderProcesses(data.processes||[])}
 });
 
+const EVENTS = [
+  { class: '', html: `<div class="event-card"><small>SYSTEM EVENT // PRIORITY ANALYSIS</small><h2>ANOMALY DETECTED</h2><p>NODE 03</p><div class="event-progress"><i></i></div><strong>ANALYZING...</strong></div>` },
+  { class: 'primary', html: `<div class="event-card"><small>GHOST SIGNAL DETECTED</small><h2>UNREGISTERED DATA STREAM</h2><p>ORIGIN: UNKNOWN<br>ENCRYPTION: 4096-BIT<br>PACKET LOSS: 17%</p><div class="event-progress"><i></i></div><strong>DECODING...</strong><p style="margin-top:10px;font-size:0.8em;color:var(--text-medium)">SIGNATURE MATCH: NONE<br>CLASSIFICATION: NON-HOSTILE<br>ARCHIVING SIGNAL...</p></div>` },
+  { class: 'secondary', html: `<div class="event-card"><small>BLACK ICE PROTOCOL</small><h2>UNAUTHORIZED PATTERN DETECTED</h2><p>ISOLATION MODE ACTIVE<br>NODE MATRIX LOCKED</p><div class="event-progress"><i></i></div><strong>ANALYZING...</strong><p style="margin-top:10px;font-size:0.8em;color:var(--text-medium)">STATUS: NEUTRALIZED<br>SYSTEM SECURE</p></div>` }
+];
+
 function triggerRandomAlarm() {
   if (document.body.classList.contains('secondary-monitor')) return;
   const overlay = $('#eventOverlay');
-  if(overlay) {
-    overlay.classList.add('visible');
-    setTimeout(() => overlay.classList.remove('visible'), 4000);
-  }
+  if(!overlay) return;
+  const evt = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+  overlay.innerHTML = evt.html;
+  overlay.className = 'event-overlay visible ' + evt.class;
+  const progress = overlay.querySelector('.event-progress i');
+  if(progress) setTimeout(() => progress.style.width = '100%', 50);
+  setTimeout(() => {
+    overlay.classList.remove('visible');
+    setTimeout(() => overlay.innerHTML = '', 400);
+  }, 9000 + Math.random() * 4000);
 }
 
 function renderTelemetry(data){

@@ -26,6 +26,7 @@ public partial class ScreensaverWindow : Window
         _previewParent = IntPtr.Zero;
         WindowState = System.Windows.WindowState.Normal;
         _bounds = bounds;
+        Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
         
         if (isBlank)
         {
@@ -53,7 +54,6 @@ public partial class ScreensaverWindow : Window
         {
             _inputEnabledAt = DateTime.UtcNow.AddSeconds(5.0);
             _initialMousePosition = Mouse.GetPosition(this);
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
             Focus();
         };
         MouseMove += OnMouseMove;
