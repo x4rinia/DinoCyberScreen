@@ -193,8 +193,8 @@ button { font: inherit; }
 .transition { position:absolute;inset:0;z-index:30;pointer-events:none;opacity:0;background:linear-gradient(180deg,transparent 0,rgba(var(--primary-rgb),.12) 49%,var(--primary) 50%,transparent 51%);transform:translateY(-100%); }.transition.run{animation:scanTransition .72s ease-in-out}.transition.run::after{content:"HUD RECONFIGURATION";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);color:var(--primary);letter-spacing:.25em;font-size:10px}
 @keyframes scanTransition{0%{opacity:0;transform:translateY(-100%)}30%{opacity:1}70%{opacity:1}100%{opacity:0;transform:translateY(100%)}}
 
-.app:not([data-mode="overview"]) .panel { opacity:.34;filter:saturate(.55) brightness(.68);transform:scale(.996)}
-.app[data-mode="system"] .zone-system,.app[data-mode="network"] .zone-network,.app[data-mode="dino"] .zone-dino,.app[data-mode="data"] .zone-data { opacity:1;filter:none;transform:none;border-color:var(--line-strong); }
+.app:not([data-mode="overview"]) .panel { opacity:.35; }
+.app[data-mode="system"] .zone-system,.app[data-mode="network"] .zone-network,.app[data-mode="dino"] .zone-dino,.app[data-mode="data"] .zone-data { opacity:1;border-color:var(--line-strong); }
 .module-disabled { opacity:.18!important;filter:grayscale(1) brightness(.45)!important; }
 .module-disabled::after { content:"MODULE DISABLED";position:absolute;inset:50% auto auto 50%;width:auto;height:auto;transform:translate(-50%,-50%);border:0;color:var(--dim);letter-spacing:.16em;white-space:nowrap; }
 

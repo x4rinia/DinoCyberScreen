@@ -49,6 +49,7 @@ subscribe((data,delta)=>{
 });
 
 function triggerRandomAlarm() {
+  if (document.body.classList.contains('secondary-monitor')) return;
   const overlay = $('#eventOverlay');
   if(overlay) {
     overlay.classList.add('visible');
