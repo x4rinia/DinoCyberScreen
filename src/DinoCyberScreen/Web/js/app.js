@@ -33,7 +33,7 @@ let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
 
 subscribeSettings(settings=>{
   const themeStr = String(settings.theme || 'blue').toLowerCase();
-  const theme = ['green', 'red', 'white'].includes(themeStr) ? themeStr : 'blue';
+  const theme = ['green', 'red', 'white', 'pink', 'rosa'].includes(themeStr) ? (themeStr === 'rosa' ? 'pink' : themeStr) : 'blue';
   document.body.dataset.theme = theme;
   app.dataset.theme = theme;
   
@@ -48,6 +48,12 @@ subscribeSettings(settings=>{
   } else if (specimen === 'raptor') {
     if (holoImg) holoImg.src = 'assets/raptor-hologram.png';
     if (coreTitle) coreTitle.textContent = 'VELO CORE';
+  } else if (specimen === 'stego') {
+    if (holoImg) holoImg.src = 'assets/stego-hologram.png';
+    if (coreTitle) coreTitle.textContent = 'STEGO CORE';
+  } else if (specimen === 'ptero' || specimen === 'pterodactylus' || specimen === 'pterodax') {
+    if (holoImg) holoImg.src = 'assets/ptero-hologram.png';
+    if (coreTitle) coreTitle.textContent = 'PTERO CORE';
   } else {
     if (holoImg) holoImg.src = 'assets/ankylo-hologram.png';
     if (coreTitle) coreTitle.textContent = 'ANKYLO CORE';

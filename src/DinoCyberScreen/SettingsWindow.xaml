@@ -290,6 +290,8 @@
                                 <ComboBoxItem Content="Ankylosaurus (Standard)" Tag="ankylo" />
                                 <ComboBoxItem Content="Triceratops" Tag="triceratops" />
                                 <ComboBoxItem Content="Velociraptor" Tag="raptor" />
+                                <ComboBoxItem Content="Stegosaurus" Tag="stego" />
+                                <ComboBoxItem Content="Pterodactylus" Tag="ptero" />
                             </ComboBox>
                         </StackPanel>
                     </Grid>
@@ -305,6 +307,7 @@
                             <ComboBoxItem Content="Green" />
                             <ComboBoxItem Content="Red" />
                             <ComboBoxItem Content="White" />
+                            <ComboBoxItem Content="Pink" />
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>

@@ -8,12 +8,14 @@
 
 ## Features
 
-- **3 Holographic Core Specimens:** Choose between **Ankylosaurus (Standard)**, **Triceratops**, and **Velociraptor** as your central 3D wireframe hologram display.
-- **4 Custom Color Profiles:** Select from 4 curated Cyberpunk color themes:
+- **5 Holographic Core Specimens:** Choose between **Ankylosaurus (ANKYLO CORE)**, **Triceratops (TRICERA CORE)**, **Velociraptor (VELO CORE)**, **Stegosaurus (STEGO CORE)**, and **Pterodactylus (PTERO CORE)** as your central 3D wireframe hologram display.
+- **5 Custom Color Profiles:** Select from 5 curated Cyberpunk color themes:
   - **Blue:** Electric Cyan & Deep Cobalt Blue
   - **Green:** Matrix Green & Lime/Yellow-Green
   - **Red:** Cyber Red & Neon Orange
   - **White:** Platinum White & Cool Sky Blue
+  - **Pink:** Cyber Magenta & Hot Pink / Rose
+- **Personalized System Name:** Customize the HUD header text to display your own custom handle or system callsign (defaults to `DINO` if left blank).
 - **Single & Dual Monitor Support (1 or 2 Displays):**
   - **2 Displays:** Displays the dedicated Holographic Dino Core on your secondary monitor and the Cyber Operations Dashboard on your primary monitor.
   - **1 Display:** Combines all telemetry metrics and the Holographic Core into a unified HUD overview layout.
@@ -39,7 +41,7 @@ Installing DinoCyberScreen is quick and simple:
 To customize DinoCyberScreen settings:
 
 1. Click **Settings / Einstellungen** in your Windows Screen Saver dialog or launch `DinoCyberScreen.exe`.
-2. Configure your preferred **Dino Specimen** (Ankylosaurus, Triceratops, Velociraptor), **Theme Color** (Blue, Green, Red, White), **Monitor Mode**, and **Telemetry Options**.
+2. Configure your preferred **Dino Specimen** (Ankylosaurus, Triceratops, Velociraptor, Stegosaurus, Pterodactylus), **Theme Color** (Blue, Green, Red, White, Pink), **Personalized Name**, **Monitor Mode**, and **Telemetry Options**.
 3. Click **SPEICHERN** to save your profile.
 
 ---

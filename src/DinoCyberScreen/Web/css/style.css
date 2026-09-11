@@ -107,6 +107,24 @@
   --shadow-rgb: 255, 255, 255;
 }
 
+.app[data-theme="pink"], body[data-theme="pink"] {
+  --primary: #ff66cc;
+  --primary-rgb: 255, 102, 204;
+  --secondary: #ff99ee;
+  --secondary-rgb: 255, 153, 238;
+  --tertiary: #ffccf5;
+  --text: #ffe6f9;
+  --heading: #ffb3ec;
+  --metric-heading: #ff80df;
+  --text-medium: #e6a6d9;
+  --data-text: #d973bf;
+  --muted: #a66f99;
+  --dim: #59314e;
+  --grid-rgb: 255, 102, 204;
+  --ambient-rgb: 255, 102, 204;
+  --shadow-rgb: 255, 102, 204;
+}
+
 .app[data-background="pure-black"] {
   --bg: #000000;
   --bg-deep: #000000;
@@ -218,6 +236,7 @@ button { font: inherit; }
 .app[data-theme="red"] .dino-hologram, body[data-theme="red"] .dino-hologram { filter: hue-rotate(240deg) saturate(2) drop-shadow(0 0 14px rgba(255, 59, 92, .8)) brightness(1.2) !important; }
 .app[data-theme="white"] .dino-hologram, body[data-theme="white"] .dino-hologram { filter: grayscale(1) brightness(1.8) drop-shadow(0 0 14px rgba(255, 255, 255, .85)) !important; }
 .app[data-theme="blue"] .dino-hologram, body[data-theme="blue"] .dino-hologram { filter: hue-rotate(60deg) drop-shadow(0 0 14px rgba(38, 217, 255, .7)) brightness(1.2) !important; }
+.app[data-theme="pink"] .dino-hologram, body[data-theme="pink"] .dino-hologram { filter: hue-rotate(290deg) saturate(1.8) drop-shadow(0 0 14px rgba(255, 102, 204, .8)) brightness(1.2) !important; }
 @keyframes dinoPulse { 0%,100%{opacity:.82;transform:translate(-50%,-50%) scale(.985)}50%{opacity:.96;transform:translate(-50%,-50%) scale(1.02)} }
 .core-title { position:absolute; z-index:3; top:8%; left:50%; transform:translateX(-50%); text-align:center; pointer-events:none; }
 .core-title h1 { margin:0; color:var(--text); font-family:"Bahnschrift",sans-serif; font-size:clamp(15px,1.4vw,27px); letter-spacing:.22em; font-weight:600; white-space:nowrap; }
