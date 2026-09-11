@@ -53,9 +53,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         try
         {
             _telemetry = new TelemetryService();
-            var userDataFolder = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "DinoCyberScreen", "WebView2");
+            var userDataFolder = Path.Combine(Path.GetTempPath(), "DinoCyberScreen", Guid.NewGuid().ToString());
             Directory.CreateDirectory(userDataFolder);
             var webViewEnvironment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
             await Browser.EnsureCoreWebView2Async(webViewEnvironment);
@@ -65,6 +63,13 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             Browser.CoreWebView2.Settings.IsStatusBarEnabled = false;
             Browser.CoreWebView2.WebMessageReceived += OnWebMessage;
             Browser.CoreWebView2.NavigationCompleted += OnNavigationCompleted;
+            Browser.CoreWebView2.ProcessFailed += (s, ev) => 
+            {
+                Dispatcher.Invoke(() => {
+                    Fallback.Visibility = Visibility.Visible;
+                    FallbackMessage.Text = $"WEBVIEW CRASH: {ev.ProcessFailedKind}\nIf this happens frequently, disable mode switching in settings.";
+                });
+            };
 
             var webRoot = Path.Combine(AppContext.BaseDirectory, "Web");
             if (!Directory.Exists(webRoot)) throw new DirectoryNotFoundException($"Web assets not found: {webRoot}");
