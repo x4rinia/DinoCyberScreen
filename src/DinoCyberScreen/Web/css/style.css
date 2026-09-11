@@ -232,11 +232,13 @@ button { font: inherit; }
 .core-canvas-wrap::after { width:min(66%,43vh);border:1px dashed rgba(var(--secondary-rgb),.4);animation:coreRing 28s linear infinite; }
 @keyframes coreRing { to { transform:translate(-50%,-50%) rotate(360deg); } }
 #coreCanvas { position:relative;z-index:1;width:100%; height:100%; display:block; filter:drop-shadow(0 0 10px rgba(var(--primary-rgb),.3)); }
-.dino-hologram { position:absolute;z-index:2;left:50%;top:50%;width:min(56%,320px);aspect-ratio:1.2;object-fit:contain;transform:translate(-50%,-50%);opacity:.88;mix-blend-mode:screen;filter:drop-shadow(0 0 14px rgba(var(--primary-rgb),.65)) brightness(1.18) saturate(1.25);animation:dinoPulse 5s ease-in-out infinite;pointer-events:none; }
-.app[data-theme="red"] .dino-hologram, body[data-theme="red"] .dino-hologram { filter: hue-rotate(240deg) saturate(2) drop-shadow(0 0 14px rgba(255, 59, 92, .8)) brightness(1.2) !important; }
-.app[data-theme="white"] .dino-hologram, body[data-theme="white"] .dino-hologram { filter: grayscale(1) brightness(1.8) drop-shadow(0 0 14px rgba(255, 255, 255, .85)) !important; }
-.app[data-theme="blue"] .dino-hologram, body[data-theme="blue"] .dino-hologram { filter: hue-rotate(60deg) drop-shadow(0 0 14px rgba(38, 217, 255, .7)) brightness(1.2) !important; }
-.app[data-theme="pink"] .dino-hologram, body[data-theme="pink"] .dino-hologram { filter: hue-rotate(290deg) saturate(1.8) drop-shadow(0 0 14px rgba(255, 102, 204, .8)) brightness(1.2) !important; }
+.dino-hologram { position:absolute;z-index:2;left:50%;top:50%;width:min(60%,340px);height:min(60%,340px);object-fit:contain;object-position:center center;transform:translate(-50%,-50%);opacity:.9;mix-blend-mode:screen;filter:drop-shadow(0 0 14px rgba(var(--primary-rgb),.65)) brightness(1.18) saturate(1.25);animation:dinoPulse 5s ease-in-out infinite;pointer-events:none; }
+/* Cyan-based images (hue ~180°): shift to target hue */
+.app[data-theme="blue"] .dino-hologram, body[data-theme="blue"] .dino-hologram   { filter: hue-rotate(0deg)   saturate(1.6) drop-shadow(0 0 18px rgba(38, 217, 255, .9))  brightness(1.25) !important; }
+.app[data-theme="green"] .dino-hologram, body[data-theme="green"] .dino-hologram { filter: hue-rotate(-60deg) saturate(2.2) drop-shadow(0 0 18px rgba(77, 255, 136, .9))  brightness(1.25) !important; }
+.app[data-theme="red"] .dino-hologram, body[data-theme="red"] .dino-hologram     { filter: hue-rotate(120deg) saturate(2.5) drop-shadow(0 0 18px rgba(255, 59, 92, .9))   brightness(1.25) !important; }
+.app[data-theme="white"] .dino-hologram, body[data-theme="white"] .dino-hologram { filter: grayscale(1)        saturate(0)   drop-shadow(0 0 18px rgba(255, 255, 255, .95)) brightness(2.0)  !important; }
+.app[data-theme="pink"] .dino-hologram, body[data-theme="pink"] .dino-hologram   { filter: hue-rotate(120deg) saturate(2.2) drop-shadow(0 0 18px rgba(255, 102, 204, .9)) brightness(1.25) !important; }
 @keyframes dinoPulse { 0%,100%{opacity:.82;transform:translate(-50%,-50%) scale(.985)}50%{opacity:.96;transform:translate(-50%,-50%) scale(1.02)} }
 .core-title { position:absolute; z-index:3; top:8%; left:50%; transform:translateX(-50%); text-align:center; pointer-events:none; }
 .core-title h1 { margin:0; color:var(--text); font-family:"Bahnschrift",sans-serif; font-size:clamp(15px,1.4vw,27px); letter-spacing:.22em; font-weight:600; white-space:nowrap; }
