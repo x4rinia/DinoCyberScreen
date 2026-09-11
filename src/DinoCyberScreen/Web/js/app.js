@@ -59,6 +59,10 @@ subscribeSettings(settings=>{
     if (holoImg) holoImg.src = 'assets/ptero-hologram.png';
     if (holoImg2) holoImg2.src = 'assets/ptero-hologram.png';
     if (coreTitle) coreTitle.textContent = 'PTERO CORE';
+  } else if (specimen === 'compy' || specimen === 'compsognathus') {
+    if (holoImg) holoImg.src = 'assets/compy-hologram.png';
+    if (holoImg2) holoImg2.src = 'assets/compy-hologram.png';
+    if (coreTitle) coreTitle.textContent = 'COMPY CORE';
   } else {
     if (holoImg) holoImg.src = 'assets/ankylo-hologram.png';
     if (holoImg2) holoImg2.src = 'assets/ankylo-hologram.png';

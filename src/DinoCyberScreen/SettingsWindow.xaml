@@ -287,11 +287,12 @@
                             </ComboBox>
                             <TextBlock Text="DINO TYP" Foreground="#7895A4" FontSize="10" />
                             <ComboBox x:Name="DinoCombo">
-                                <ComboBoxItem Content="Ankylosaurus (Standard)" Tag="ankylo" />
+                                <ComboBoxItem Content="Ankylosaurus" Tag="ankylo" />
                                 <ComboBoxItem Content="Triceratops" Tag="triceratops" />
                                 <ComboBoxItem Content="Velociraptor" Tag="raptor" />
                                 <ComboBoxItem Content="Stegosaurus" Tag="stego" />
                                 <ComboBoxItem Content="Pterodactylus" Tag="ptero" />
+                                <ComboBoxItem Content="Compsognathus" Tag="compy" />
                             </ComboBox>
                         </StackPanel>
                     </Grid>
@@ -323,6 +324,7 @@
                             <ComboBoxItem Content="Red" />
                             <ComboBoxItem Content="White" />
                             <ComboBoxItem Content="Pink" />
+                            <ComboBoxItem Content="Rainbow" />
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>

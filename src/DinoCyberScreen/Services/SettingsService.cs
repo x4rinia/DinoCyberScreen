@@ -51,6 +51,7 @@ public sealed class SettingsService
             "red" => "Red",
             "white" => "White",
             "pink" or "rosa" => "Pink",
+            "rainbow" => "Rainbow",
             _ => "Blue"
         };
 }
