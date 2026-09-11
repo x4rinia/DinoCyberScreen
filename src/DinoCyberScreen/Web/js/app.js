@@ -9,6 +9,10 @@ const $ = selector => document.querySelector(selector);
 const app=$('#app'), modes=['system','network','dino','data','overview'];
 let currentMode=4,nextModeAt=performance.now()+120000,lastUi=0,lastProcesses=0;
 
+if (new URLSearchParams(window.location.search).get('secondary') === '1') {
+    document.body.classList.add('secondary-monitor');
+}
+
 initializeCharts();initializeNetwork();initializeCore();initializeStreams();initializeEvents();
 
 const coreBars=$('#coreBars');for(let i=0;i<16;i++)coreBars.append(document.createElement('i'));

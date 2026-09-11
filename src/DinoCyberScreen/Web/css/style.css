@@ -210,3 +210,16 @@ button { font: inherit; }
   .status-unit,.rail-separator,.quality{display:none}.dashboard{grid-template-columns:33fr 40fr 27fr}.metric-stats{display:none}.metric-visual{grid-template-columns:1fr 1fr}.brand span:last-child{display:none}.bottom-rail nav button:nth-child(-n+4){display:none}
 }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} }
+
+/* --- Secondary Monitor Extension --- */
+.secondary-monitor .app { grid-template-rows: 1fr; padding: 0; }
+.secondary-monitor .top-rail, .secondary-monitor .bottom-rail { display: none; }
+.secondary-monitor .dashboard { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.secondary-monitor .system-panel, .secondary-monitor .right-stack, .secondary-monitor .bottom-grid { display: none; }
+.secondary-monitor .core-panel { grid-column: 1 / -1; grid-row: 1 / -1; background: radial-gradient(circle at 50% 50%, rgba(var(--primary-rgb),.05), var(--bg-deep) 70%); border: none; clip-path: none; box-shadow: none; }
+.secondary-monitor .core-title { top: 8%; transform: scale(1.4) translateX(-35%); opacity: 0.4; }
+.secondary-monitor .core-title strong { display: none; }
+.secondary-monitor .core-title small::after { content: ' - AUXILIARY DISPLAY ACTIVE'; color: var(--muted); }
+.secondary-monitor .dino-hologram { width: min(45%, 500px); opacity: 0.15; filter: hue-rotate(var(--hologram-hue)) saturate(0.2); }
+.secondary-monitor .core-canvas-wrap::before, .secondary-monitor .core-canvas-wrap::after { display: none; }
+.secondary-monitor .ambient-grid { opacity: 0.08; }
