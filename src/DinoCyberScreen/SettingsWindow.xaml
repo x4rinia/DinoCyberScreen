@@ -299,8 +299,23 @@
 
                 <GroupBox Header="PERSONALIZATION &amp; COLOR PROFILE">
                     <StackPanel>
-                        <TextBlock Text="SYSTEM NAME (CANNOT BE EMPTY)" Foreground="#7895A4" FontSize="10" />
-                        <TextBox x:Name="CustomNameText" MaxLength="18" Margin="0,5,0,12" />
+                        <TextBlock Text="SYSTEM NAME" Foreground="#7895A4" FontSize="10" />
+                        <Grid Margin="0,5,0,12">
+                            <TextBox x:Name="CustomNameText" MaxLength="8" />
+                            <TextBlock Text="(Dino)" Foreground="#456070" FontSize="11" Margin="6,4,0,0"
+                                       IsHitTestVisible="False" Padding="0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=CustomNameText}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                         <TextBlock Text="THEME" Foreground="#7895A4" FontSize="10" />
                         <ComboBox x:Name="ThemeCombo" Margin="0,5,0,5">
                             <ComboBoxItem Content="Blue" />
