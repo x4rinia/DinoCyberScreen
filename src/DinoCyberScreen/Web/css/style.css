@@ -223,3 +223,10 @@ button { font: inherit; }
 .secondary-monitor .dino-hologram { width: min(45%, 500px); opacity: 0.15; filter: hue-rotate(var(--hologram-hue)) saturate(0.2); }
 .secondary-monitor .core-canvas-wrap::before, .secondary-monitor .core-canvas-wrap::after { display: none; }
 .secondary-monitor .ambient-grid { opacity: 0.08; }
+
+/* --- Core Clock & Binary Rain --- */
+.core-clock { position: absolute; z-index: 10; bottom: 18%; left: 50%; transform: translateX(-50%); color: var(--primary); font-family: "Bahnschrift", sans-serif; font-size: clamp(20px, 2.2vw, 36px); font-weight: 700; letter-spacing: 0.15em; text-shadow: 0 0 15px rgba(var(--primary-rgb), 0.6); pointer-events: none; opacity: 0.85; }
+.secondary-monitor .core-clock { bottom: 22%; font-size: clamp(32px, 3.5vw, 60px); }
+
+.binary-rain { display: none; }
+.secondary-monitor .binary-rain { display: block; position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; opacity: 0.15; pointer-events: none; filter: drop-shadow(0 0 5px rgba(var(--primary-rgb), 0.5)); }

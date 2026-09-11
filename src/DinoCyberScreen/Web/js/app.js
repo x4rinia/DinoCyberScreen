@@ -43,7 +43,11 @@ subscribe((data,delta)=>{
 });
 
 function renderTelemetry(data){
-  const date=data.timestamp?new Date(data.timestamp):new Date();$('#clock').textContent=date.toLocaleTimeString('de-DE',{hour12:false});$('#date').textContent=date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();$('#uptime').textContent=data.uptime||'00:00:00';$('#hostName').textContent=(data.computerName||'LOCAL NODE').toUpperCase();
+  const date=data.timestamp?new Date(data.timestamp):new Date();
+  const timeStr = date.toLocaleTimeString('de-DE',{hour12:false});
+  $('#clock').textContent = timeStr;
+  $('#coreClock').textContent = timeStr;
+  $('#date').textContent=date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();$('#uptime').textContent=data.uptime||'00:00:00';$('#hostName').textContent=(data.computerName||'LOCAL NODE').toUpperCase();
   const cpu=data.cpu.usage,gpu=data.gpu.usage,ram=data.ram.usage;setValue('#cpuValue',format(cpu,0,'%'));setWidth('#cpuBar',cpu);$('#cpuName').textContent=data.cpu.name||'PROCESSOR ARRAY';setValue('#gpuValue',format(gpu,0,'%'));setWidth('#gpuBar',gpu);$('#gpuName').textContent=data.gpu.name||'GPU NOT DETECTED';setValue('#ramValue',format(ram,0,'%'));setWidth('#ramBar',ram);$('#ramUsed').textContent=format(data.ram.used,1,' GB');$('#ramTotal').textContent=format(data.ram.total,1,' GB');
   const cs=chartStats('cpu'),gs=chartStats('gpu');$('#cpuPeak').textContent=format(cs.peak,0,'%');$('#cpuAvg').textContent=format(cs.average,0,'%');$('#gpuPeak').textContent=format(gs.peak,0,'%');$('#gpuAvg').textContent=format(gs.average,0,'%');
   const temp=Math.max(data.cpu.temperature||0,data.gpu.temperature||0)||null;$('#temperature').textContent=format(temp,0,'°C');$('#coreTemp').textContent=format(temp,0,'°C');$('#vramValue').textContent=data.gpu.vramUsed==null||data.gpu.vramTotal==null?'N/A':`${data.gpu.vramUsed.toFixed(1)} / ${data.gpu.vramTotal.toFixed(1)} GB`;
@@ -61,3 +65,47 @@ function setWidth(selector,value){$(selector).style.width=Math.max(0,Math.min(10
 function escapeHtml(value){return String(value??'').replace(/[&<>"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[char]))}
 
 window.addEventListener('keydown',event=>{if(event.key==='ArrowRight')setMode(modes[(modes.indexOf(app.dataset.mode)+1)%modes.length],true);if(event.key==='ArrowLeft')setMode(modes[(modes.indexOf(app.dataset.mode)+modes.length-1)%modes.length],true)});
+
+// Matrix Binary Rain for Secondary Monitor
+function initBinaryRain() {
+    const canvas = document.getElementById('binaryCanvas');
+    if (!canvas || !document.body.classList.contains('secondary-monitor')) return;
+    const ctx = canvas.getContext('2d');
+    
+    let width, height, columns;
+    const drops = [];
+    const fontSize = 16;
+    
+    function resize() {
+        width = canvas.width = canvas.offsetWidth;
+        height = canvas.height = canvas.offsetHeight;
+        columns = Math.floor(width / fontSize);
+        while(drops.length < columns) drops.push(Math.random() * -100);
+    }
+    
+    window.addEventListener('resize', resize);
+    resize();
+    
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, width, height);
+        
+        const isGreen = document.body.dataset.theme === 'green' || document.querySelector('.app').dataset.theme === 'green';
+        ctx.fillStyle = isGreen ? '#5cff9c' : '#26d9ff';
+        ctx.font = fontSize + 'px monospace';
+        
+        for (let i = 0; i < drops.length; i++) {
+            const text = Math.random() > 0.5 ? '1' : '0';
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
+            if (drops[i] * fontSize > height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+        setTimeout(() => requestAnimationFrame(draw), 45);
+    }
+    
+    draw();
+}
+initBinaryRain();
