@@ -5,10 +5,23 @@ const fragment=`precision mediump float;uniform vec4 color;uniform float points;
 export function initializeCore(){canvas=document.querySelector('#coreCanvas');gl=canvas.getContext('webgl',{alpha:true,antialias:true,preserveDrawingBuffer:false});if(!gl){canvas.dataset.fallback='true';return}program=createProgram(vertex,fragment);pointBuffer=gl.createBuffer();lineBuffer=gl.createBuffer();rebuild();gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE);}
 function createProgram(vs,fs){const compile=(type,source)=>{const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);return s};const p=gl.createProgram();gl.attachShader(p,compile(gl.VERTEX_SHADER,vs));gl.attachShader(p,compile(gl.FRAGMENT_SHADER,fs));gl.linkProgram(p);return p}
 function rebuild(){if(!gl)return;const count=quality==='Low'?110:quality==='Medium'?180:280,nodes=[];for(let i=0;i<count;i++){const y=1-(i/(count-1))*2,r=Math.sqrt(1-y*y),theta=Math.PI*(3-Math.sqrt(5))*i;nodes.push([Math.cos(theta)*r,y,Math.sin(theta)*r])}const lines=[];const step=quality==='High'?7:11;for(let i=0;i<count;i++){for(const off of [1,step]){const a=nodes[i],b=nodes[(i+off)%count];lines.push(...a,...b)}}gl.bindBuffer(gl.ARRAY_BUFFER,pointBuffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(nodes.flat()),gl.STATIC_DRAW);pointCount=count;gl.bindBuffer(gl.ARRAY_BUFFER,lineBuffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(lines),gl.STATIC_DRAW);lineCount=lines.length/3}
-export function configureCore(settings){quality=settings.animationQuality||'High';fps=settings.targetFps||60;syncThemeColors();rebuild()}
+const THEME_COLORS = {
+  blue:  { primary: [.15, .85, 1.0], secondary: [.25, 1.0, .75] },
+  green: { primary: [.36, 1.0, .61], secondary: [.70, 1.0, .30] },
+  red:   { primary: [1.0, .23, .36], secondary: [1.0, .55, .26] },
+  white: { primary: [1.0, 1.0, 1.0], secondary: [.39, .89, 1.0] }
+};
+
+export function configureCore(settings){
+  quality=settings.animationQuality||'High';
+  fps=settings.targetFps||60;
+  const theme = String(settings.theme || 'blue').toLowerCase();
+  const c = THEME_COLORS[theme] || THEME_COLORS.blue;
+  lineColor = c.primary;
+  pointColor = c.secondary;
+  rebuild();
+}
 export function setCoreIntensity(value){intensity=Math.max(.15,Math.min(1,(value||0)/100))}
-function syncThemeColors(){const style=getComputedStyle(document.querySelector('#app'));lineColor=parseColor(style.getPropertyValue('--primary').trim(),lineColor);pointColor=parseColor(style.getPropertyValue('--secondary').trim(),pointColor)}
-function parseColor(value,fallback){const match=/^#([0-9a-f]{6})$/i.exec(value);if(!match)return fallback;const number=parseInt(match[1],16);return [(number>>16&255)/255,(number>>8&255)/255,(number&255)/255]}
 function resize(){const box=canvas.getBoundingClientRect(),scale=quality==='Low'?1:Math.min(devicePixelRatio||1,1.65),w=Math.max(2,Math.floor(box.width*scale)),h=Math.max(2,Math.floor(box.height*scale));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}}
 export function drawCore(now){if(!gl||now-lastFrame<1000/fps)return;lastFrame=now;resize();gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.useProgram(program);const pos=gl.getAttribLocation(program,'p'),time=(now-start)*(.000045+intensity*.000035);gl.uniform1f(gl.getUniformLocation(program,'t'),time);gl.enableVertexAttribArray(pos);
   gl.bindBuffer(gl.ARRAY_BUFFER,lineBuffer);gl.vertexAttribPointer(pos,3,gl.FLOAT,false,0,0);gl.uniform4f(gl.getUniformLocation(program,'color'),lineColor[0],lineColor[1],lineColor[2],.11+intensity*.08);gl.uniform1f(gl.getUniformLocation(program,'points'),0);gl.uniform1f(gl.getUniformLocation(program,'size'),1);gl.drawArrays(gl.LINES,0,lineCount);
