@@ -31,7 +31,6 @@ public partial class SettingsWindow : Window
         Select(QualityCombo, settings.AnimationQuality, useTag: false);
         Select(DinoCombo, settings.DinoSpecimen, useTag: true);
         Select(ThemeCombo, settings.Theme, useTag: false);
-        Select(BackgroundCombo, settings.BackgroundStyle, useTag: false);
     }
 
     private void SaveClick(object sender, RoutedEventArgs e)
@@ -49,8 +48,7 @@ public partial class SettingsWindow : Window
             TargetFps = int.TryParse(Selected(FpsCombo, false), out var fps) ? fps : 60,
             AnimationQuality = Selected(QualityCombo, false),
             DinoSpecimen = Selected(DinoCombo, true),
-            Theme = Selected(ThemeCombo, false),
-            BackgroundStyle = Selected(BackgroundCombo, false)
+            Theme = Selected(ThemeCombo, false)
         });
         if (Owner is not null) DialogResult = true;
         else Close();

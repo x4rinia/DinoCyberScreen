@@ -34,6 +34,7 @@ let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
 subscribeSettings(settings=>{
   const themeStr = String(settings.theme || 'blue').toLowerCase();
   const theme = ['green', 'red', 'white'].includes(themeStr) ? themeStr : 'blue';
+  document.body.dataset.theme = theme;
   app.dataset.theme = theme;
   
   const background={"dark blue tint":"dark-blue","dark green tint":"dark-green"}[String(settings.backgroundStyle||'').toLowerCase()]||'pure-black';app.dataset.background=background;
