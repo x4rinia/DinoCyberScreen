@@ -1,39 +1,48 @@
 @echo off
 setlocal EnableExtensions
 
-set "INSTALL=%SystemRoot%\Dino_SCR"
-set "SYSTEM_SCR=%SystemRoot%\System32\DinoCyberScreen.scr"
-
-if not defined SystemRoot (
-  echo FEHLER: SystemRoot ist nicht definiert.
-  exit /b 1
-)
-
+rem --- 1. Admin-Rechte pruefen ---
 "%SystemRoot%\System32\fltmc.exe" >nul 2>&1
 if errorlevel 1 (
   echo Administratorrechte werden angefordert...
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -ArgumentList '%*' -Verb RunAs"
+  set "ARGS=%*"
+  if "%*"=="" (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+  ) else (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -ArgumentList '%*' -Verb RunAs"
+  )
   exit /b
 )
 
-if /I not "%INSTALL%"=="%SystemRoot%\Dino_SCR" (
-  echo FEHLER: Unerwarteter Installationspfad: "%INSTALL%"
-  exit /b 2
+echo Beende laufende Bildschirmschoner-Prozesse...
+powershell -Command "Get-Process -Name '*DinoCyber*' -ErrorAction SilentlyContinue | Stop-Process -Force"
+timeout /t 2 /nobreak >nul
+
+rem --- 2. Dateien entfernen ---
+set "TARGET_DIR=%SystemRoot%\Dino_SCR"
+set "TARGET_SCR=%SystemRoot%\System32\DinoCyberScreen.scr"
+
+echo.
+echo Entferne DinoCyberScreen...
+
+if exist "%TARGET_DIR%" (
+  rmdir /s /q "%TARGET_DIR%"
+  echo - %TARGET_DIR% geloescht.
 )
-if /I not "%SYSTEM_SCR%"=="%SystemRoot%\System32\DinoCyberScreen.scr" (
-  echo FEHLER: Unerwarteter Screensaver-Pfad: "%SYSTEM_SCR%"
-  exit /b 2
+
+if exist "%TARGET_SCR%" (
+  del /f /q "%TARGET_SCR%"
+  echo - %TARGET_SCR% geloescht.
 )
 
-if exist "%SYSTEM_SCR%" del /f /q "%SYSTEM_SCR%"
-if exist "%INSTALL%" rmdir /s /q "%INSTALL%"
+echo.
+echo Deinstallation abgeschlossen.
+echo.
 
-if exist "%SYSTEM_SCR%" goto :remove_error
-if exist "%INSTALL%" goto :remove_error
+if /I "%~1"=="/NOOPEN" goto :done
+choice /M "Windows-Bildschirmschonereinstellungen jetzt oeffnen"
+if errorlevel 2 goto :done
+control.exe desk.cpl,,@screensaver
 
-echo DinoCyberScreen wurde entfernt.
+:done
 exit /b 0
-
-:remove_error
-echo FEHLER: DinoCyberScreen konnte nicht vollstaendig entfernt werden.
-exit /b 3

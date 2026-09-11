@@ -1,68 +1,90 @@
 @echo off
 setlocal EnableExtensions
 
-rem Pfad zum Dino_SCR Ordner
-set "SOURCE=%~dp0..\Dino_SCR"
-set "INSTALL=%SystemRoot%\Dino_SCR"
-set "SYSTEM_SCR=%SystemRoot%\System32\DinoCyberScreen.scr"
-
-if not defined SystemRoot (
-  echo FEHLER: SystemRoot ist nicht definiert.
-  exit /b 1
-)
-
+rem --- 1. Admin-Rechte pruefen ---
 "%SystemRoot%\System32\fltmc.exe" >nul 2>&1
 if errorlevel 1 (
   echo Administratorrechte werden angefordert...
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -ArgumentList '%*' -Verb RunAs"
+  set "ARGS=%*"
+  if "%*"=="" (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -Verb RunAs"
+  ) else (
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process -FilePath '%~f0' -ArgumentList '%*' -Verb RunAs"
+  )
   exit /b
 )
 
-if /I not "%INSTALL%"=="%SystemRoot%\Dino_SCR" (
-  echo FEHLER: Unerwarteter Installationspfad: "%INSTALL%"
-  exit /b 2
-)
-
 echo Beende laufende Bildschirmschoner-Prozesse...
-powershell -Command "Get-Process | Where-Object { $_.Name -like '*DinoCyber*' } | Stop-Process -Force -ErrorAction SilentlyContinue"
+powershell -Command "Get-Process -Name '*DinoCyber*' -ErrorAction SilentlyContinue | Stop-Process -Force"
 timeout /t 2 /nobreak >nul
 
-if not exist "%SOURCE%\DinoCyberScreen.exe" (
-  echo FEHLER: DinoCyberScreen.exe fehlt im Release-Ordner.
+rem --- 2. Quelle definieren ---
+set "SOURCE_DIR=%~dp0Dino_SCR"
+set "TARGET_DIR=%SystemRoot%\Dino_SCR"
+set "TARGET_SCR=%SystemRoot%\System32\DinoCyberScreen.scr"
+
+rem --- 3. Quelldatei pruefen ---
+if not exist "%SOURCE_DIR%\DinoCyberScreen.exe" (
+  echo.
+  echo FEHLER: Quelldatei nicht gefunden!
+  echo Erwarteter Pfad: "%SOURCE_DIR%\DinoCyberScreen.exe"
+  echo Bitte starte das Skript direkt aus dem Release-Ordner.
+  pause
   exit /b 3
 )
-if not exist "%SOURCE%\DinoCyberScreen.scr" (
-  echo FEHLER: DinoCyberScreen.scr fehlt im Release-Ordner.
-  exit /b 3
-)
-if not exist "%SOURCE%\Web\index.html" (
-  echo FEHLER: Web\index.html fehlt im Release-Ordner.
-  exit /b 3
-)
-if not exist "%SOURCE%\Web\assets\ankylo-hologram.png" (
-  echo FEHLER: Das Ankylosaurus-Asset fehlt im Release-Ordner.
+
+if not exist "%SOURCE_DIR%\DinoCyberScreen.scr" (
+  echo FEHLER: DinoCyberScreen.scr fehlt im Quellordner.
+  pause
   exit /b 3
 )
 
-echo Installiere DinoCyberScreen nach "%INSTALL%"...
-if exist "%INSTALL%" rmdir /s /q "%INSTALL%"
-mkdir "%INSTALL%"
-if errorlevel 1 goto :directory_error
-
-"%SystemRoot%\System32\robocopy.exe" "%SOURCE%" "%INSTALL%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS /NP /XF Install-Screensaver.bat Uninstall-Screensaver.bat /XD DinoCyberScreen.exe.WebView2 >nul
-if errorlevel 8 goto :payload_error
-
-copy /Y "%SOURCE%\DinoCyberScreen.scr" "%SYSTEM_SCR%" >nul
-if errorlevel 1 goto :screensaver_error
-
-if not exist "%INSTALL%\DinoCyberScreen.exe" goto :verify_error
-if not exist "%INSTALL%\Web\index.html" goto :verify_error
-if not exist "%SYSTEM_SCR%" goto :verify_error
-
+rem --- 4. Zielordner erstellen ---
 echo.
-echo DinoCyberScreen wurde erfolgreich installiert.
-echo Payload: %INSTALL%
-echo Screensaver: %SYSTEM_SCR%
+echo Installiere DinoCyberScreen nach "%TARGET_DIR%"...
+if exist "%TARGET_DIR%" rmdir /s /q "%TARGET_DIR%"
+mkdir "%TARGET_DIR%"
+if errorlevel 1 (
+  echo FEHLER: Der Zielordner "%TARGET_DIR%" konnte nicht erstellt werden.
+  pause
+  exit /b 4
+)
+
+rem --- 5. Dateien kopieren ---
+"%SystemRoot%\System32\robocopy.exe" "%SOURCE_DIR%" "%TARGET_DIR%" /E /COPY:DAT /DCOPY:DAT /R:2 /W:1 /NFL /NDL /NJH /NJS /NP >nul
+if errorlevel 8 (
+  echo FEHLER: Dateien konnten nicht kopiert werden. Robocopy Code: %ERRORLEVEL%
+  pause
+  exit /b 5
+)
+
+rem --- 6. Ueberpruefen EXE ---
+if not exist "%TARGET_DIR%\DinoCyberScreen.exe" (
+  echo FEHLER: Installation fehlgeschlagen. "%TARGET_DIR%\DinoCyberScreen.exe" fehlt.
+  pause
+  exit /b 7
+)
+
+rem --- 7. SCR kopieren und ueberpruefen ---
+copy /Y "%SOURCE_DIR%\DinoCyberScreen.scr" "%TARGET_SCR%" >nul
+if errorlevel 1 (
+  echo FEHLER: DinoCyberScreen.scr konnte nicht nach System32 kopiert werden.
+  pause
+  exit /b 6
+)
+
+if not exist "%TARGET_SCR%" (
+  echo FEHLER: "%TARGET_SCR%" wurde nach dem Kopieren nicht gefunden.
+  pause
+  exit /b 7
+)
+
+rem --- Erfolgreich ---
+echo.
+echo DinoCyberScreen wurde erfolgreich installiert!
+echo - Payload: %TARGET_DIR%
+echo - Screensaver: %TARGET_SCR%
+echo.
 
 if /I "%~1"=="/NOOPEN" goto :done
 choice /M "Windows-Bildschirmschonereinstellungen jetzt oeffnen"
@@ -71,24 +93,3 @@ control.exe desk.cpl,,@screensaver
 
 :done
 exit /b 0
-
-:directory_error
-echo.
-echo FEHLER: Der Installationsordner konnte nicht erstellt werden.
-exit /b 4
-
-:payload_error
-set "ROBOCOPY_RESULT=%ERRORLEVEL%"
-echo.
-echo FEHLER: Die Anwendungsdateien konnten nicht kopiert werden. Robocopy-Code: %ROBOCOPY_RESULT%
-exit /b 5
-
-:screensaver_error
-echo.
-echo FEHLER: DinoCyberScreen.scr konnte nicht nach System32 kopiert werden.
-exit /b 6
-
-:verify_error
-echo.
-echo FEHLER: Die installierten Dateien konnten nicht verifiziert werden.
-exit /b 7
