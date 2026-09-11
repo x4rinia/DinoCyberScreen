@@ -92,16 +92,16 @@
 .app[data-theme="white"], body[data-theme="white"] {
   --primary: #ffffff;
   --primary-rgb: 255, 255, 255;
-  --secondary: #99d6ff;
-  --secondary-rgb: 153, 214, 255;
-  --tertiary: #cce6ff;
+  --secondary: #c8d8e0;
+  --secondary-rgb: 200, 216, 224;
+  --tertiary: #e2edf2;
   --text: #ffffff;
-  --heading: #e6f7ff;
-  --metric-heading: #cceeff;
-  --text-medium: #b3c2cc;
-  --data-text: #99abb8;
-  --muted: #788a99;
-  --dim: #404d59;
+  --heading: #eef5f8;
+  --metric-heading: #ddeaf0;
+  --text-medium: #b8c8d0;
+  --data-text: #9aacb8;
+  --muted: #7a8c99;
+  --dim: #3c4d55;
   --grid-rgb: 255, 255, 255;
   --ambient-rgb: 255, 255, 255;
   --shadow-rgb: 255, 255, 255;
@@ -227,23 +227,37 @@ button { font: inherit; }
 .core-panel { grid-column:2; grid-row:1; background:radial-gradient(circle at 50% 50%,rgba(var(--primary-rgb),.06),rgba(var(--surface-deep-rgb),.97) 64%); overflow:hidden; }
 .core-panel::before { left:50%; transform:translateX(-50%); width:30%; }
 .core-canvas-wrap { position:absolute; z-index:1; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
-.core-canvas-wrap::before,.core-canvas-wrap::after { content:"";position:absolute;z-index:0;left:50%;top:50%;transform:translate(-50%,-50%);aspect-ratio:1;border-radius:50%;pointer-events:none; }
-.core-canvas-wrap::before { width:min(82%,54vh);border:2px solid rgba(var(--primary-rgb),.32);background:repeating-radial-gradient(circle,transparent 0 14.5%,rgba(var(--primary-rgb),.07) 14.8% 15%,transparent 15.3% 24%);box-shadow:0 0 35px rgba(var(--primary-rgb),.1),inset 0 0 35px rgba(var(--primary-rgb),.06); }
-.core-canvas-wrap::after { width:min(66%,43vh);border:1px dashed rgba(var(--secondary-rgb),.4);animation:coreRing 28s linear infinite; }
-@keyframes coreRing { to { transform:translate(-50%,-50%) rotate(360deg); } }
+.core-canvas-wrap::before,.core-canvas-wrap::after { content:none; }
 #coreCanvas { position:relative;z-index:1;width:100%; height:100%; display:block; filter:drop-shadow(0 0 10px rgba(var(--primary-rgb),.3)); }
-.dino-hologram { position:absolute;z-index:2;left:50%;top:50%;width:min(72%,400px);height:min(72%,400px);object-fit:contain;object-position:center center;transform:translate(-50%,-50%);opacity:.92;mix-blend-mode:screen;animation:dinoPulse 5s ease-in-out infinite;pointer-events:none; }
-/* Source images are neon cyan (~180° hue). hue-rotate shifts from that baseline. */
-/* Blue = cyan stays → 0deg shift */
-.app[data-theme="blue"]  .dino-hologram, body[data-theme="blue"]  .dino-hologram { filter: hue-rotate(0deg)    saturate(1.6) brightness(1.3) drop-shadow(0 0 22px rgba(38,217,255,.95))  !important; }
-/* Green = cyan → green: -60deg (180→120) */
-.app[data-theme="green"] .dino-hologram, body[data-theme="green"] .dino-hologram { filter: hue-rotate(-60deg)  saturate(2.4) brightness(1.3) drop-shadow(0 0 22px rgba(77,255,136,.95))  !important; }
-/* Red = cyan → red: +180deg (180→360/0) */
-.app[data-theme="red"]   .dino-hologram, body[data-theme="red"]   .dino-hologram { filter: hue-rotate(180deg)  saturate(2.8) brightness(1.3) drop-shadow(0 0 22px rgba(255,59,92,.95))   !important; }
-/* White = desaturate fully */
-.app[data-theme="white"] .dino-hologram, body[data-theme="white"] .dino-hologram { filter: grayscale(1) saturate(0) brightness(2.1) drop-shadow(0 0 22px rgba(255,255,255,.98)) !important; }
-/* Pink = cyan → magenta: +120deg (180→300) */
-.app[data-theme="pink"]  .dino-hologram, body[data-theme="pink"]  .dino-hologram { filter: hue-rotate(120deg)  saturate(2.4) brightness(1.3) drop-shadow(0 0 22px rgba(255,102,204,.95)) !important; }
+/* Floating cyber orbs */
+.core-orbs { position:absolute;inset:0;z-index:0;pointer-events:none; }
+.core-orbs span { position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(var(--primary-rgb),.9) 0%,rgba(var(--primary-rgb),.4) 40%,transparent 70%);box-shadow:0 0 8px 2px rgba(var(--primary-rgb),.7),0 0 18px 4px rgba(var(--primary-rgb),.3); }
+.core-orbs span:nth-child(1) { width:9px;height:9px; top:18%;left:50%;  animation:orbFloat1 7s  ease-in-out infinite; }
+.core-orbs span:nth-child(2) { width:7px;height:7px; top:50%;left:18%;  animation:orbFloat2 9s  ease-in-out infinite; }
+.core-orbs span:nth-child(3) { width:10px;height:10px;top:78%;left:50%; animation:orbFloat3 8s  ease-in-out infinite; }
+.core-orbs span:nth-child(4) { width:7px;height:7px; top:50%;left:80%;  animation:orbFloat4 11s ease-in-out infinite; }
+.core-orbs span:nth-child(5) { width:5px;height:5px; top:28%;left:30%;  animation:orbFloat5 6s  ease-in-out infinite; }
+.core-orbs span:nth-child(6) { width:5px;height:5px; top:70%;left:70%;  animation:orbFloat6 10s ease-in-out infinite; }
+.core-orbs span:nth-child(7) { width:6px;height:6px; top:25%;left:72%;  animation:orbFloat5 13s ease-in-out infinite reverse; }
+.core-orbs span:nth-child(8) { width:6px;height:6px; top:72%;left:28%;  animation:orbFloat2 12s ease-in-out infinite reverse; }
+@keyframes orbFloat1 { 0%,100%{transform:translate(-50%,-50%) translateY(0px)}  50%{transform:translate(-50%,-50%) translateY(-18px)} }
+@keyframes orbFloat2 { 0%,100%{transform:translate(-50%,-50%) translateY(0px)}  50%{transform:translate(-50%,-50%) translateY(14px)} }
+@keyframes orbFloat3 { 0%,100%{transform:translate(-50%,-50%) translateY(0px)}  50%{transform:translate(-50%,-50%) translateY(-12px)} }
+@keyframes orbFloat4 { 0%,100%{transform:translate(-50%,-50%) translateY(0px)}  50%{transform:translate(-50%,-50%) translateY(20px)} }
+@keyframes orbFloat5 { 0%,100%{transform:translate(-50%,-50%) translateY(0px) scale(1)}   50%{transform:translate(-50%,-50%) translateY(-10px) scale(1.3)} }
+@keyframes orbFloat6 { 0%,100%{transform:translate(-50%,-50%) translateY(0px) scale(1)}   50%{transform:translate(-50%,-50%) translateY(16px) scale(0.8)} }
+/* Dino hologram - larger, centered, theme-colored */
+.dino-hologram { position:absolute;z-index:2;left:50%;top:50%;width:min(74%,420px);height:min(74%,420px);object-fit:contain;object-position:center center;transform:translate(-50%,-50%);opacity:.93;mix-blend-mode:screen;animation:dinoPulse 5s ease-in-out infinite;pointer-events:none; }
+/* Source images = neon cyan ~180°. hue-rotate shifts from cyan baseline. */
+.app[data-theme="blue"]  .dino-hologram, body[data-theme="blue"]  .dino-hologram { filter: hue-rotate(0deg)    saturate(1.6) brightness(1.3) drop-shadow(0 0 24px rgba(38,217,255,.95))  !important; }
+/* Cyan(180°) → Green(120°) = -60deg */
+.app[data-theme="green"] .dino-hologram, body[data-theme="green"] .dino-hologram { filter: hue-rotate(-60deg)  saturate(2.6) brightness(1.35) drop-shadow(0 0 24px rgba(77,255,136,.95))  !important; }
+/* Cyan(180°) → Red(0°/360°) = +180deg, push saturation hard */
+.app[data-theme="red"]   .dino-hologram, body[data-theme="red"]   .dino-hologram { filter: hue-rotate(180deg)  saturate(3.2) brightness(1.35) sepia(0.2) drop-shadow(0 0 24px rgba(255,59,92,.95))   !important; }
+/* White = fully desaturated */
+.app[data-theme="white"] .dino-hologram, body[data-theme="white"] .dino-hologram { filter: grayscale(1) saturate(0) brightness(2.2) drop-shadow(0 0 24px rgba(255,255,255,.98)) !important; }
+/* Cyan(180°) → Magenta(300°) = +120deg */
+.app[data-theme="pink"]  .dino-hologram, body[data-theme="pink"]  .dino-hologram { filter: hue-rotate(120deg)  saturate(3.0) brightness(1.35) drop-shadow(0 0 24px rgba(255,102,204,.95)) !important; }
 @keyframes dinoPulse { 0%,100%{opacity:.82;transform:translate(-50%,-50%) scale(.985)}50%{opacity:.96;transform:translate(-50%,-50%) scale(1.02)} }
 .core-title { position:absolute; z-index:3; top:8%; left:50%; transform:translateX(-50%); text-align:center; pointer-events:none; }
 .core-title h1 { margin:0; color:var(--text); font-family:"Bahnschrift",sans-serif; font-size:clamp(15px,1.4vw,27px); letter-spacing:.22em; font-weight:600; white-space:nowrap; }
