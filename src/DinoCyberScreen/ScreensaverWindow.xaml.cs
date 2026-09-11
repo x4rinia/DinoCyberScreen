@@ -12,8 +12,9 @@ namespace DinoCyberScreen;
 public partial class ScreensaverWindow : Window
 {
     private readonly IntPtr _previewParent;
-    private DateTime _inputEnabledAt = DateTime.UtcNow.AddSeconds(2.5);
+    private DateTime _inputEnabledAt = DateTime.UtcNow.AddSeconds(5.0);
     private System.Windows.Point? _initialMousePosition;
+    private System.Drawing.Rectangle _bounds;
     private DispatcherTimer? _previewWatchdog;
     private bool _closing;
 
@@ -24,10 +25,7 @@ public partial class ScreensaverWindow : Window
         InitializeComponent();
         _previewParent = IntPtr.Zero;
         WindowState = System.Windows.WindowState.Normal;
-        Left = bounds.Left;
-        Top = bounds.Top;
-        Width = bounds.Width;
-        Height = bounds.Height;
+        _bounds = bounds;
         Hud.Configure(settingsService, previewMode: false);
         AttachInputHandlers();
     }
@@ -38,14 +36,13 @@ public partial class ScreensaverWindow : Window
         _previewParent = previewParent;
         Topmost = false;
         Hud.Configure(settingsService, previewMode: true);
-        SourceInitialized += InitializePreviewHost;
     }
 
     private void AttachInputHandlers()
     {
         Loaded += (_, _) =>
         {
-            _inputEnabledAt = DateTime.UtcNow.AddSeconds(2.0);
+            _inputEnabledAt = DateTime.UtcNow.AddSeconds(5.0);
             _initialMousePosition = Mouse.GetPosition(this);
             Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
             Focus();
@@ -71,7 +68,22 @@ public partial class ScreensaverWindow : Window
             RequestExit();
     }
 
-    private void InitializePreviewHost(object? sender, EventArgs e)
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        if (_previewParent != IntPtr.Zero)
+        {
+            InitializePreviewHost();
+        }
+        else
+        {
+            var hwnd = new WindowInteropHelper(this).Handle;
+            NativeMethods.SetWindowPos(hwnd, IntPtr.Zero, _bounds.Left, _bounds.Top, _bounds.Width, _bounds.Height,
+                NativeMethods.SwpNoZOrder | NativeMethods.SwpNoActivate | NativeMethods.SwpShowWindow);
+        }
+    }
+
+    private void InitializePreviewHost()
     {
         if (_previewParent == IntPtr.Zero) return;
         var source = (HwndSource)PresentationSource.FromVisual(this)!;
