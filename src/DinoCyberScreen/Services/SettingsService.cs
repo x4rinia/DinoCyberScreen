@@ -81,10 +81,9 @@ public sealed class SettingsService
         settings.DinoSpecimen = NormalizeDinoSpecimen(settings.DinoSpecimen);
         settings.BackgroundStyle = NormalizeBackgroundStyle(settings.BackgroundStyle);
 
-        if (settings.Theme == "Rainbow" || settings.DinoSpecimen == "special")
+        if (settings.DinoSpecimen == "special" && settings.Theme != "Rainbow")
         {
             settings.Theme = "Rainbow";
-            settings.DinoSpecimen = "special";
         }
     }
 }

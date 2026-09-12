@@ -318,12 +318,27 @@ button { font: inherit; }
 /* Dino hologram – RADIAL MASK hides JPEG rect edges, reduced brightness */
 /* === DINO HOLOGRAM – two-tone: primary top, secondary bottom === */
 .dino-hologram, .dino-hologram-2 {
+  --dino-tx: -50%;
+  --dino-ty: -50%;
+  --dino-scale-base: 1.0;
   position:absolute;z-index:2;left:50%;top:50%;
   width:min(74%,420px);height:min(74%,420px);
   object-fit:contain;object-position:center center;
-  transform:translate(-50%,-50%);
+  transform:translate(var(--dino-tx),var(--dino-ty)) scale(var(--dino-scale-base));
   mix-blend-mode:screen;
   animation:dinoPulse 5s ease-in-out infinite;pointer-events:none;
+}
+.app[data-specimen="ankylo"] .dino-hologram, .app[data-specimen="ankylo"] .dino-hologram-2 {
+  --dino-tx: -50%; --dino-ty: -45%; --dino-scale-base: 1.1;
+}
+.app[data-specimen="stego"] .dino-hologram, .app[data-specimen="stego"] .dino-hologram-2 {
+  --dino-tx: -50%; --dino-ty: -45%; --dino-scale-base: 1.0;
+}
+.app[data-specimen="ptero"] .dino-hologram, .app[data-specimen="ptero"] .dino-hologram-2 {
+  --dino-tx: -50%; --dino-ty: -55%; --dino-scale-base: 1.15;
+}
+.app[data-specimen="compy"] .dino-hologram, .app[data-specimen="compy"] .dino-hologram-2 {
+  --dino-tx: -50%; --dino-ty: -40%; --dino-scale-base: 1.05;
 }
 /* Primary layer – upper portion visible */
 .dino-hologram {
@@ -354,7 +369,8 @@ button { font: inherit; }
 .app[data-theme="pink"]  .dino-hologram,  body[data-theme="pink"]  .dino-hologram  { filter: hue-rotate(120deg) saturate(2.8) brightness(0.88) drop-shadow(0 0 14px rgba(255,102,204,.65)) !important; }
 .app[data-theme="pink"]  .dino-hologram-2, body[data-theme="pink"]  .dino-hologram-2 { filter: hue-rotate(155deg) saturate(2.5) brightness(0.85) !important; }
 .app[data-specimen="special"] .dino-hologram, body[data-specimen="special"] .dino-hologram {
-  left:50%;top:50%;transform:translate(-50%,-50%);object-position:50% 50%;
+  --dino-tx: -50%; --dino-ty: -48%; --dino-scale-base: 1.1;
+  left:50%;top:50%;object-position:50% 50%;
   width:min(72%,410px);height:min(68%,410px);opacity:.9;
   mask-image:radial-gradient(ellipse 88% 88% at center, black 42%, transparent 82%);
   -webkit-mask-image:radial-gradient(ellipse 88% 88% at center, black 42%, transparent 82%);
@@ -362,7 +378,7 @@ button { font: inherit; }
   animation:dinoPulse 5s ease-in-out infinite !important;
 }
 .app[data-specimen="special"] .dino-hologram-2, body[data-specimen="special"] .dino-hologram-2 { display:none; }
-@keyframes dinoPulse { 0%,100%{opacity:.78;transform:translate(-50%,-50%) scale(.985)}50%{opacity:.88;transform:translate(-50%,-50%) scale(1.02)} }
+@keyframes dinoPulse { 0%,100%{opacity:.78;transform:translate(var(--dino-tx),var(--dino-ty)) scale(calc(var(--dino-scale-base) * 0.985))} 50%{opacity:.88;transform:translate(var(--dino-tx),var(--dino-ty)) scale(calc(var(--dino-scale-base) * 1.02))} }
 
 /* Callout labels with connector lines */
 .core-callouts { position:absolute;inset:0;z-index:4;pointer-events:none; }
@@ -448,7 +464,7 @@ button { font: inherit; }
 .secondary-monitor .core-title strong { display: none; }
 .secondary-monitor .core-title small::after { content: ' - AUXILIARY DISPLAY ACTIVE'; color: var(--muted); }
 .secondary-monitor .dino-hologram { width: min(45%, 500px); opacity: 0.15; filter: hue-rotate(var(--hologram-hue)) saturate(0.2); }
-.secondary-monitor .app[data-specimen="special"] .dino-hologram { left:50%;top:50%;width:min(52%,600px);height:min(54%,600px);opacity:.62;object-position:50% 50%;filter:brightness(.86) saturate(1.2) contrast(1.05) drop-shadow(0 0 22px rgba(41,191,255,.48)) drop-shadow(0 0 34px rgba(255,79,216,.24)) !important; }
+.secondary-monitor .app[data-specimen="special"] .dino-hologram { left:50%;top:43%;width:min(52%,600px);height:min(54%,600px);opacity:.62;object-position:50% 50%;filter:brightness(.86) saturate(1.2) contrast(1.05) drop-shadow(0 0 22px rgba(41,191,255,.48)) drop-shadow(0 0 34px rgba(255,79,216,.24)) !important; }
 .secondary-monitor .app[data-theme="rainbow"] .core-panel { background:radial-gradient(circle at 32% 42%,rgba(255,56,100,.055),transparent 27%),radial-gradient(circle at 68% 44%,rgba(139,92,255,.065),transparent 30%),radial-gradient(circle at 50% 66%,rgba(38,247,199,.05),transparent 34%),#000; }
 .secondary-monitor .app[data-theme="rainbow"] .core-canvas-wrap::after { border-color:rgba(41,191,255,.5);box-shadow:0 0 22px rgba(255,79,216,.13),inset 0 0 18px rgba(38,247,199,.08); }
 .secondary-monitor .ambient-grid { opacity: 0.08; }
