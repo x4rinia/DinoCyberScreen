@@ -328,7 +328,7 @@
                             <ComboBoxItem Content="Pink" />
                             <ComboBoxItem Content="Rainbow" />
                         </ComboBox>
-                        <TextBlock Text="Rainbow ist fest mit Dino (Spezial) gekoppelt."
+                        <TextBlock Text="Dino (Spezial) verwendet immer das Rainbow-Theme."
                                    Foreground="#557481" FontSize="9" Margin="0,2,0,0" />
                     </StackPanel>
                 </GroupBox>
