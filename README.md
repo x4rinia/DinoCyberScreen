@@ -8,13 +8,14 @@
 
 ## Features
 
-- **5 Holographic Core Specimens:** Choose between **Ankylosaurus (ANKYLO CORE)**, **Triceratops (TRICERA CORE)**, **Velociraptor (VELO CORE)**, **Stegosaurus (STEGO CORE)**, and **Pterodactylus (PTERO CORE)** as your central 3D wireframe hologram display.
-- **5 Custom Color Profiles:** Select from 5 curated Cyberpunk color themes:
+- **7 Holographic Core Specimens:** Choose between **Ankylosaurus (ANKYLO CORE)**, **Triceratops (TRICERA CORE)**, **Velociraptor (VELO CORE)**, **Stegosaurus (STEGO CORE)**, **Pterodactylus (PTERO CORE)**, **Compsognathus (COMPY CORE)**, and the friendly holographic **Dino (Spezial)**.
+- **6 Custom Color Profiles:** Select from 6 curated Cyberpunk color themes:
   - **Blue:** Electric Cyan & Deep Cobalt Blue
   - **Green:** Matrix Green & Lime/Yellow-Green
   - **Red:** Cyber Red & Neon Orange
   - **White:** Platinum White & Cool Sky Blue
   - **Pink:** Cyber Magenta & Hot Pink / Rose
+  - **Rainbow:** Simultaneous neon accents on a black HUD, coupled exclusively with **Dino (Spezial)**
 - **Personalized System Name:** Customize the HUD header text to display your own custom handle or system callsign (defaults to `DINO` if left blank).
 - **Single & Dual Monitor Support (1 or 2 Displays):**
   - **2 Displays:** Displays the dedicated Holographic Dino Core on your secondary monitor and the Cyber Operations Dashboard on your primary monitor.
