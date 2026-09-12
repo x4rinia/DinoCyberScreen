@@ -6,7 +6,7 @@
 
 ![Dino Spezial Rainbow Hologram](docs/rainbow-screen.png)
 
-The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** theme and uses simultaneous neon accents on the black Cyber-HUD.
+The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** theme. However, the **Rainbow** theme itself is fully available for all normal dinos as well, adding a dynamic, color-shifting holographic effect to their models.
 
 **DinoCyberScreen** is a modern, sci-fi cyber operations Windows screensaver created by **X4RiNiA**. It transforms your idle displays into a futuristic command center featuring real-time system telemetry, holographic dinosaur core specimens, and customizable color themes.
 
@@ -21,7 +21,7 @@ The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** them
   - **Red:** Cyber Red & Neon Orange
   - **White:** Platinum White & Cool Sky Blue
   - **Pink:** Cyber Magenta & Hot Pink / Rose
-  - **Rainbow:** Simultaneous neon accents on a black HUD, coupled exclusively with **Dino (Spezial)**
+  - **Rainbow:** Simultaneous neon accents on a black HUD. Required exclusively for **Dino (Spezial)**, but fully available for all normal dinos!
 - **Personalized System Name:** Customize the HUD header text to display your own custom handle or system callsign (defaults to `DINO` if left blank).
 - **Single & Dual Monitor Support (1 or 2 Displays):**
   - **2 Displays:** Displays the dedicated Holographic Dino Core on your secondary monitor and the Cyber Operations Dashboard on your primary monitor.
@@ -48,7 +48,7 @@ Installing DinoCyberScreen is quick and simple:
 To customize DinoCyberScreen settings:
 
 1. Click **Settings / Einstellungen** in your Windows Screen Saver dialog or launch `DinoCyberScreen.exe`.
-2. Configure your preferred **Dino Specimen** (Ankylosaurus, Triceratops, Velociraptor, Stegosaurus, Pterodactylus, Compsognathus or Dino (Spezial)), **Theme Color** (Blue, Green, Red, White, Pink or Rainbow), **Personalized Name**, **Monitor Mode**, and **Telemetry Options**. Rainbow and Dino (Spezial) are coupled; this friendly holographic combination is the default for a fresh profile.
+2. Configure your preferred **Dino Specimen** (Ankylosaurus, Triceratops, Velociraptor, Stegosaurus, Pterodactylus, Compsognathus or Dino (Spezial)), **Theme Color** (Blue, Green, Red, White, Pink or Rainbow), **Personalized Name**, **Monitor Mode**, and **Telemetry Options**. Dino (Spezial) is strictly locked to the Rainbow theme, but you can select Rainbow for any other dino as well!
 3. Click **SPEICHERN** to save your profile.
 
 ---
