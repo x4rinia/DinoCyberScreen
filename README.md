@@ -2,6 +2,12 @@
 
 ![DinoCyberScreen Preview](docs/implementation-black-green-1920x1080.png)
 
+## Dino Spezial — Rainbow Hologram
+
+![Dino Spezial Rainbow Hologram](src/DinoCyberScreen/Web/assets/dino-special-rainbow.png)
+
+The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** theme and uses simultaneous neon accents on the black Cyber-HUD.
+
 **DinoCyberScreen** is a modern, sci-fi cyber operations Windows screensaver created by **X4RiNiA**. It transforms your idle displays into a futuristic command center featuring real-time system telemetry, holographic dinosaur core specimens, and customizable color themes.
 
 ---
