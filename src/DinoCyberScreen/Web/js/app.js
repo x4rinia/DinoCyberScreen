@@ -21,7 +21,22 @@ const coreBars=$('#coreBars');for(let i=0;i<16;i++)coreBars.append(document.crea
 
 window.addEventListener('mousemove', () => document.body.classList.add('show-cursor'));
 $('#modeNav').addEventListener('click',event=>{const button=event.target.closest('button[data-mode]');if(button)setMode(button.dataset.mode,true)});
-$('#settingsButton').addEventListener('click',()=>window.chrome?.webview?.postMessage({command:'openSettings'}));
+
+  let isSettingsMessageActive = false;
+  $('#settingsButton').addEventListener('click', () => {
+    if (isSettingsMessageActive) return;
+    const overlay = $('#eventOverlay');
+    if (!overlay) return;
+    const messages = ['SYSTEM DIAGNOSTICS ONLINE', 'NETWORK UPLINK OPTIMAL', 'DEFENSE GRID ACTIVE', 'SENSOR ARRAY NOMINAL', 'COMMUNICATIONS ESTABLISHED', 'DINO CORE STABLE'];
+    const text = messages[Math.floor(Math.random() * messages.length)];
+    overlay.innerHTML = `<div class="event-card primary"><small>SYSTEM NOTIFICATION</small><h2>STATUS UPDATE</h2><p><span>${text}</span></p><div class="event-progress"><i></i></div></div>`;
+    overlay.classList.add('visible');
+    isSettingsMessageActive = true;
+    setTimeout(() => {
+      overlay.classList.remove('visible');
+      setTimeout(() => { isSettingsMessageActive = false; }, 300);
+    }, 2000);
+  });
 
 function setMode(mode,manual=false){
   const index=modes.indexOf(mode);if(index<0||app.dataset.mode===mode)return;currentMode=index;
@@ -31,10 +46,10 @@ function setMode(mode,manual=false){
 let nextEventAt = performance.now() + 10000 + Math.random() * 20000;
 let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
 
-subscribeSettings(settings=>{
-  let themeStr = String(settings.theme || 'blue').toLowerCase();
-  let specimen = String(settings.dinoSpecimen || 'ankylo').toLowerCase();
-  if (themeStr === 'rainbow' || specimen === 'special') { themeStr = 'rainbow'; specimen = 'special'; }
+  subscribeSettings(settings=>{
+    let themeStr = String(settings.theme || 'blue').toLowerCase();
+    let specimen = String(settings.dinoSpecimen || 'ankylo').toLowerCase();
+    if (specimen === 'special') { themeStr = 'rainbow'; }
   const theme = ['green', 'red', 'white', 'pink', 'rosa', 'rainbow'].includes(themeStr) ? (themeStr === 'rosa' ? 'pink' : themeStr) : 'blue';
   document.body.dataset.theme = theme;
   app.dataset.theme = theme;
