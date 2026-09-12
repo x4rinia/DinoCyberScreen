@@ -14,7 +14,7 @@ The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** them
 
 ## Features
 
-- **7 Holographic Core Specimens:** Choose between **Ankylosaurus (ANKYLO CORE)**, **Triceratops (TRICERA CORE)**, **Velociraptor (VELO CORE)**, **Stegosaurus (STEGO CORE)**, **Pterodactylus (PTERO CORE)**, **Compsognathus (COMPY CORE)**, and the friendly holographic **Dino (Spezial)**.
+- **7 Holographic Core Specimens:** Choose between **Ankylosaurus (ANKYLO CORE)**, **Triceratops (TRICERA CORE)**, **Velociraptor (VELO CORE)**, **Stegosaurus (STEGO CORE)**, **Pterodactylus (PTERO CORE)**, **Compsognathus (COMPY CORE)**, and the friendly holographic **Dino (Spezial)**, which uses the neutral **DINO CORE** heading.
 - **6 Custom Color Profiles:** Select from 6 curated Cyberpunk color themes:
   - **Blue:** Electric Cyan & Deep Cobalt Blue
   - **Green:** Matrix Green & Lime/Yellow-Green

@@ -49,7 +49,7 @@ subscribeSettings(settings=>{
   if (specimen === 'special') {
     if (holoImg) holoImg.src = 'assets/dino-special-rainbow.png';
     if (holoImg2) holoImg2.src = 'assets/dino-special-rainbow.png';
-    if (coreTitle) coreTitle.textContent = 'DINO SPECIAL';
+    if (coreTitle) coreTitle.textContent = 'DINO CORE';
   } else if (specimen === 'triceratops') {
     if (holoImg) holoImg.src = 'assets/triceratops-hologram.png';
     if (holoImg2) holoImg2.src = 'assets/triceratops-hologram.png';
