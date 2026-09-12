@@ -278,6 +278,7 @@
                                 <ComboBoxItem Content="Medium" />
                                 <ComboBoxItem Content="High" />
                             </ComboBox>
+                            <CheckBox x:Name="EnergySavingCheck" Content="Energiesparmodus" Margin="0,15,0,0" Foreground="#A2BDC8" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="TARGET FPS" Foreground="#7895A4" FontSize="10" />

@@ -18,8 +18,9 @@ function parseHex(value){const hex=String(value||'').trim().replace('#','');if(!
 function rainbowColor(now,offset=0){if(!rainbowColors.length)return offset?pointColor:lineColor;const position=((now-start)/2600+offset)%rainbowColors.length,index=Math.floor(position),mix=position-index,a=rainbowColors[index],b=rainbowColors[(index+1)%rainbowColors.length];return a.map((value,i)=>value+(b[i]-value)*mix)}
 
 export function configureCore(settings){
-  quality=settings.animationQuality||'High';
-  fps=settings.targetFps||60;
+  const isEco = settings.energySavingMode === true;
+  quality=isEco ? 'Low' : (settings.animationQuality||'High');
+  fps=isEco ? 24 : (settings.targetFps||60);
   const theme = String(settings.theme || 'blue').toLowerCase();
   activeTheme=theme in THEME_COLORS?theme:'blue';
   const c = THEME_COLORS[activeTheme];

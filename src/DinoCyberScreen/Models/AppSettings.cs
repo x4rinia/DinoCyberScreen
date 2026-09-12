@@ -10,6 +10,7 @@ public sealed class AppSettings
     public bool EnableEvents { get; set; } = true;
     public bool ShowDinoCore { get; set; } = true;
     public bool AllMonitors { get; set; } = true;
+    public bool EnergySavingMode { get; set; } = false;
     public int TargetFps { get; set; } = 60;
     public string AnimationQuality { get; set; } = "High";
     public int ModeIntervalSeconds { get; set; } = 120;

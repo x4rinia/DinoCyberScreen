@@ -95,7 +95,12 @@ let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
   const customName = (settings.customName || '').trim() || 'DINO';
   if (brandMark) brandMark.textContent = customName;
 
-  configureCore(settings);setNetworkQuality(settings.animationQuality);$('#qualityState').textContent=`${settings.targetFps||60} FPS / ${(settings.animationQuality||'High').toUpperCase()}`;
+  configureCore(settings);
+  const isEco = settings.energySavingMode === true;
+  setNetworkQuality(isEco ? 'Low' : settings.animationQuality);
+  const fps = isEco ? 24 : (settings.targetFps || 60);
+  const qual = isEco ? 'ECO-MODE' : (settings.animationQuality || 'High').toUpperCase();
+  $('#qualityState').textContent = `${fps} FPS / ${qual}`;
   $('#terminalPanel').classList.toggle('module-disabled',settings.showTerminal===false);$('#hexPanel').classList.toggle('module-disabled',settings.showHexStream===false);$('.core-panel').classList.toggle('module-disabled',settings.showDinoCore===false);
   setMode('overview');
 });

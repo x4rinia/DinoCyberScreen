@@ -38,6 +38,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         _previewMode = previewMode;
         _isSecondary = isSecondary;
         _settings = settingsService.Load();
+        _timer.Interval = _settings.EnergySavingMode ? TimeSpan.FromMilliseconds(2000) : TimeSpan.FromMilliseconds(750);
     }
 
     public void ReloadSettings()
