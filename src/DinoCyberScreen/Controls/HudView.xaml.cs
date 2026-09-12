@@ -15,6 +15,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
     private readonly DispatcherTimer _timer;
     private TelemetryService? _telemetry;
     private SettingsService? _settingsService;
+    private Task<TelemetryService>? _telemetryTask;
     private AppSettings _settings = new();
     private bool _previewMode;
     private bool _isSecondary;
@@ -67,7 +68,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         }
         try
         {
-            _telemetry = new TelemetryService();
+            _telemetryTask = Task.Run(() => new TelemetryService());
             var userDataFolder = Path.Combine(Path.GetTempPath(), "DinoCyberScreen", Guid.NewGuid().ToString());
             Directory.CreateDirectory(userDataFolder);
             var webViewEnvironment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
@@ -108,11 +109,13 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         }
     }
 
-    private void OnNavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
+    private async void OnNavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
     {
         if (!e.IsSuccess) return;
         _ready = true;
         SendEnvelope("settings", _settings);
+        if (_telemetryTask is null) return;
+        try { _telemetry = await _telemetryTask; } catch { }
         SendTelemetry(this, EventArgs.Empty);
         _timer.Start();
     }

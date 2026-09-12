@@ -58,7 +58,7 @@ function interpolate(now) {
   listeners.forEach(fn => fn(display, delta));
   requestAnimationFrame(interpolate);
 }
-requestAnimationFrame(interpolate);
+requestAnimationFrame(() => requestAnimationFrame(interpolate));
 
 export function subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); }
 export function subscribeSettings(listener) { settingsListeners.add(listener); listener(settings); return () => settingsListeners.delete(listener); }

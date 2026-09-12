@@ -15,7 +15,9 @@ if (urlParams.get('singleMonitor') === '1') document.body.classList.add('single-
 if (urlParams.get('primary') === '1') document.body.classList.add('primary-monitor');
 if (urlParams.get('primaryMulti') === '1') document.body.classList.add('primary-multi');
 
-initializeCharts();initializeNetwork();initializeCore();initializeStreams();initializeEvents();
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  initializeCharts();initializeNetwork();initializeCore();initializeStreams();initializeEvents();
+}));
 
 const coreBars=$('#coreBars');for(let i=0;i<16;i++)coreBars.append(document.createElement('i'));
 
