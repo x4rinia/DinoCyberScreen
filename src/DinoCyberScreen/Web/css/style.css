@@ -368,6 +368,26 @@ button { font: inherit; }
 /* PINK: cyan→magenta (+120°) primary, cyan→purple (+145°) secondary */
 .app[data-theme="pink"]  .dino-hologram,  body[data-theme="pink"]  .dino-hologram  { filter: hue-rotate(120deg) saturate(2.8) brightness(0.88) drop-shadow(0 0 14px rgba(255,102,204,.65)) !important; }
 .app[data-theme="pink"]  .dino-hologram-2, body[data-theme="pink"]  .dino-hologram-2 { filter: hue-rotate(155deg) saturate(2.5) brightness(0.85) !important; }
+
+/* RAINBOW (Normal Dinos): dynamic hue shifting */
+.app[data-theme="rainbow"]:not([data-specimen="special"]) .dino-hologram, 
+body[data-theme="rainbow"]:not([data-specimen="special"]) .dino-hologram { 
+  animation: dinoPulse 5s ease-in-out infinite, rainbowHolo 8s linear infinite !important; 
+}
+.app[data-theme="rainbow"]:not([data-specimen="special"]) .dino-hologram-2, 
+body[data-theme="rainbow"]:not([data-specimen="special"]) .dino-hologram-2 { 
+  animation: dinoPulse 5s ease-in-out infinite, rainbowHolo2 12s linear infinite !important; 
+}
+@keyframes rainbowHolo {
+  0% { filter: hue-rotate(0deg) saturate(2) brightness(0.95) drop-shadow(0 0 14px rgba(41,191,255,.65)); }
+  33% { filter: hue-rotate(120deg) saturate(2) brightness(0.95) drop-shadow(0 0 14px rgba(255,79,216,.65)); }
+  66% { filter: hue-rotate(240deg) saturate(2) brightness(0.95) drop-shadow(0 0 14px rgba(223,255,63,.65)); }
+  100% { filter: hue-rotate(360deg) saturate(2) brightness(0.95) drop-shadow(0 0 14px rgba(41,191,255,.65)); }
+}
+@keyframes rainbowHolo2 {
+  0% { filter: hue-rotate(180deg) saturate(1.8) brightness(0.85); }
+  100% { filter: hue-rotate(540deg) saturate(1.8) brightness(0.85); }
+}
 .app[data-specimen="special"] .dino-hologram, body[data-specimen="special"] .dino-hologram {
   --dino-tx: -50%; --dino-ty: -48%; --dino-scale-base: 1.1;
   left:50%;top:50%;object-position:50% 50%;
