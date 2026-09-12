@@ -65,6 +65,9 @@ if errorlevel 1 (
 echo Beende laufende Bildschirmschoner-Prozesse...
 powershell -Command "Get-Process -Name '*DinoCyber*' -ErrorAction SilentlyContinue | Stop-Process -Force"
 sc stop DinoCyberScreen >nul 2>&1
+rem Legacy-Treiber frueherer Builds entfernen, damit Dino_SCR sauber aktualisiert werden kann.
+sc stop R0DinoCyberScreen >nul 2>&1
+sc delete R0DinoCyberScreen >nul 2>&1
 timeout /t 2 /nobreak >nul
 
 rem --- 2. Quelle definieren ---
@@ -91,6 +94,13 @@ if not exist "%SOURCE_DIR%\DinoCyberScreen.scr" (
 rem --- 4. Zielordner erstellen ---
 echo.
 echo Installiere DinoCyberScreen nach "%TARGET_DIR%"...
+if exist "%TARGET_DIR%" rmdir /s /q "%TARGET_DIR%"
+if exist "%TARGET_DIR%" (
+  echo FEHLER: Der bestehende Zielordner "%TARGET_DIR%" konnte nicht vollstaendig bereinigt werden.
+  echo Bitte laufende DinoCyberScreen-Prozesse beenden und die Installation erneut starten.
+  pause
+  exit /b 4
+)
 if not exist "%TARGET_DIR%" mkdir "%TARGET_DIR%"
 if errorlevel 1 (
   echo FEHLER: Der Zielordner "%TARGET_DIR%" konnte nicht erstellt werden.
@@ -164,6 +174,8 @@ if errorlevel 1 (
 echo Beende laufende Bildschirmschoner-Prozesse...
 powershell -Command "Get-Process -Name '*DinoCyber*' -ErrorAction SilentlyContinue | Stop-Process -Force"
 sc stop DinoCyberScreen >nul 2>&1
+sc stop R0DinoCyberScreen >nul 2>&1
+sc delete R0DinoCyberScreen >nul 2>&1
 timeout /t 2 /nobreak >nul
 
 rem --- 2. Dateien entfernen ---
@@ -173,14 +185,18 @@ set "TARGET_SCR=%SystemRoot%\System32\DinoCyberScreen.scr"
 echo.
 echo Entferne DinoCyberScreen...
 
-if exist "%TARGET_DIR%" (
-  del /f /q "%TARGET_DIR%\*.*" >nul 2>&1
-  echo - Dateien in %TARGET_DIR% geloescht.
-)
-
 if exist "%TARGET_SCR%" (
   del /f /q "%TARGET_SCR%"
   echo - %TARGET_SCR% geloescht.
+)
+
+if exist "%TARGET_DIR%" (
+  rmdir /s /q "%TARGET_DIR%"
+  if exist "%TARGET_DIR%" (
+    echo FEHLER: %TARGET_DIR% konnte nicht vollstaendig entfernt werden.
+    exit /b 5
+  )
+  echo - %TARGET_DIR% geloescht.
 )
 
 echo.
@@ -208,7 +224,8 @@ $requiredFiles = @(
     (Join-Path $releaseDirectory 'Install-Screensaver.bat'),
     (Join-Path $releaseDirectory 'Uninstall-Screensaver.bat'),
     (Join-Path $dinoScrDir 'Web\index.html'),
-    (Join-Path $dinoScrDir 'Web\assets\ankylo-hologram.png')
+    (Join-Path $dinoScrDir 'Web\assets\ankylo-hologram.png'),
+    (Join-Path $dinoScrDir 'Web\assets\dino-special-rainbow.png')
 )
 foreach ($requiredFile in $requiredFiles) {
     if (-not (Test-Path -LiteralPath $requiredFile)) {

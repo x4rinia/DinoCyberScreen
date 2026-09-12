@@ -13,8 +13,8 @@ public sealed class AppSettings
     public int TargetFps { get; set; } = 60;
     public string AnimationQuality { get; set; } = "High";
     public int ModeIntervalSeconds { get; set; } = 120;
-    public string Theme { get; set; } = "Blue";
+    public string Theme { get; set; } = "Rainbow";
     public string BackgroundStyle { get; set; } = "Pure Black";
-    public string DinoSpecimen { get; set; } = "ankylo";
+    public string DinoSpecimen { get; set; } = "special";
     public string CustomName { get; set; } = "X4RINIA";
 }

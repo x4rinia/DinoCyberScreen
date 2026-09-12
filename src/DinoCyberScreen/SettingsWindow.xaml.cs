@@ -7,13 +7,22 @@ namespace DinoCyberScreen;
 
 public partial class SettingsWindow : Window
 {
+    private enum RainbowSelectionSource { None, Dino, Theme }
+
     private readonly SettingsService _settingsService;
+    private bool _updatingSelections;
+    private string _lastNormalTheme = "Blue";
+    private string _lastNormalDino = "ankylo";
+    private RainbowSelectionSource _rainbowSelectionSource;
 
     public SettingsWindow(SettingsService settingsService)
     {
         _settingsService = settingsService;
         InitializeComponent();
         LoadSettings(settingsService.Load());
+        DinoCombo.SelectionChanged += DinoSelectionChanged;
+        ThemeCombo.SelectionChanged += ThemeSelectionChanged;
+        InitializeRainbowState();
         PathText.Text = settingsService.SettingsPath;
     }
 
@@ -27,6 +36,80 @@ public partial class SettingsWindow : Window
         Select(QualityCombo, settings.AnimationQuality, useTag: false);
         Select(DinoCombo, settings.DinoSpecimen, useTag: true);
         Select(ThemeCombo, settings.Theme, useTag: false);
+    }
+
+    private void InitializeRainbowState()
+    {
+        var specimen = Selected(DinoCombo, true);
+        var theme = Selected(ThemeCombo, false);
+        if (specimen != "special") _lastNormalDino = specimen;
+        if (!string.Equals(theme, "Rainbow", StringComparison.OrdinalIgnoreCase)) _lastNormalTheme = theme;
+
+        if (specimen == "special" || string.Equals(theme, "Rainbow", StringComparison.OrdinalIgnoreCase))
+        {
+            SetSelection(ThemeCombo, "Rainbow", false);
+            SetSelection(DinoCombo, "special", true);
+            _rainbowSelectionSource = RainbowSelectionSource.Dino;
+            ThemeCombo.IsEnabled = false;
+        }
+    }
+
+    private void DinoSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_updatingSelections) return;
+        var specimen = Selected(DinoCombo, true);
+        if (specimen == "special")
+        {
+            var currentTheme = Selected(ThemeCombo, false);
+            if (!string.Equals(currentTheme, "Rainbow", StringComparison.OrdinalIgnoreCase))
+                _lastNormalTheme = currentTheme;
+            SetSelection(ThemeCombo, "Rainbow", false);
+            _rainbowSelectionSource = RainbowSelectionSource.Dino;
+            DinoCombo.IsEnabled = true;
+            ThemeCombo.IsEnabled = false;
+            return;
+        }
+
+        _lastNormalDino = specimen;
+        if (_rainbowSelectionSource == RainbowSelectionSource.Dino ||
+            string.Equals(Selected(ThemeCombo, false), "Rainbow", StringComparison.OrdinalIgnoreCase))
+            SetSelection(ThemeCombo, _lastNormalTheme, false);
+        UnlockRainbowSelection();
+    }
+
+    private void ThemeSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_updatingSelections) return;
+        var theme = Selected(ThemeCombo, false);
+        if (string.Equals(theme, "Rainbow", StringComparison.OrdinalIgnoreCase))
+        {
+            var currentDino = Selected(DinoCombo, true);
+            if (currentDino != "special") _lastNormalDino = currentDino;
+            SetSelection(DinoCombo, "special", true);
+            _rainbowSelectionSource = RainbowSelectionSource.Theme;
+            ThemeCombo.IsEnabled = true;
+            DinoCombo.IsEnabled = false;
+            return;
+        }
+
+        _lastNormalTheme = theme;
+        if (Selected(DinoCombo, true) == "special")
+            SetSelection(DinoCombo, _lastNormalDino, true);
+        UnlockRainbowSelection();
+    }
+
+    private void UnlockRainbowSelection()
+    {
+        _rainbowSelectionSource = RainbowSelectionSource.None;
+        DinoCombo.IsEnabled = true;
+        ThemeCombo.IsEnabled = true;
+    }
+
+    private void SetSelection(System.Windows.Controls.ComboBox combo, string value, bool useTag)
+    {
+        _updatingSelections = true;
+        try { Select(combo, value, useTag); }
+        finally { _updatingSelections = false; }
     }
 
     private void SaveClick(object sender, RoutedEventArgs e)

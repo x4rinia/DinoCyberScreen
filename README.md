@@ -41,7 +41,7 @@ Installing DinoCyberScreen is quick and simple:
 To customize DinoCyberScreen settings:
 
 1. Click **Settings / Einstellungen** in your Windows Screen Saver dialog or launch `DinoCyberScreen.exe`.
-2. Configure your preferred **Dino Specimen** (Ankylosaurus, Triceratops, Velociraptor, Stegosaurus, Pterodactylus), **Theme Color** (Blue, Green, Red, White, Pink), **Personalized Name**, **Monitor Mode**, and **Telemetry Options**.
+2. Configure your preferred **Dino Specimen** (Ankylosaurus, Triceratops, Velociraptor, Stegosaurus, Pterodactylus, Compsognathus or Dino (Spezial)), **Theme Color** (Blue, Green, Red, White, Pink or Rainbow), **Personalized Name**, **Monitor Mode**, and **Telemetry Options**. Rainbow and Dino (Spezial) are coupled; this friendly holographic combination is the default for a fresh profile.
 3. Click **SPEICHERN** to save your profile.
 
 ---

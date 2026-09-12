@@ -293,6 +293,7 @@
                                 <ComboBoxItem Content="Stegosaurus" Tag="stego" />
                                 <ComboBoxItem Content="Pterodactylus" Tag="ptero" />
                                 <ComboBoxItem Content="Compsognathus" Tag="compy" />
+                                <ComboBoxItem Content="Dino (Spezial)" Tag="special" />
                             </ComboBox>
                         </StackPanel>
                     </Grid>
@@ -326,6 +327,8 @@
                             <ComboBoxItem Content="Pink" />
                             <ComboBoxItem Content="Rainbow" />
                         </ComboBox>
+                        <TextBlock Text="Rainbow ist fest mit Dino (Spezial) gekoppelt."
+                                   Foreground="#557481" FontSize="9" Margin="0,2,0,0" />
                     </StackPanel>
                 </GroupBox>
             </StackPanel>

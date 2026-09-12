@@ -27,7 +27,7 @@ public sealed class SettingsService
             if (!File.Exists(_settingsPath)) return new AppSettings();
             var settings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_settingsPath), _jsonOptions)
                            ?? new AppSettings();
-            settings.Theme = NormalizeTheme(settings.Theme);
+            Normalize(settings);
             return settings;
         }
         catch
@@ -38,7 +38,7 @@ public sealed class SettingsService
 
     public void Save(AppSettings settings)
     {
-        settings.Theme = NormalizeTheme(settings.Theme);
+        Normalize(settings);
         var temporaryPath = _settingsPath + ".tmp";
         File.WriteAllText(temporaryPath, JsonSerializer.Serialize(settings, _jsonOptions));
         File.Move(temporaryPath, _settingsPath, true);
@@ -54,4 +54,37 @@ public sealed class SettingsService
             "rainbow" => "Rainbow",
             _ => "Blue"
         };
+
+    private static string NormalizeDinoSpecimen(string? specimen) =>
+        specimen?.Trim().ToLowerInvariant() switch
+        {
+            "triceratops" => "triceratops",
+            "raptor" or "velociraptor" => "raptor",
+            "stego" or "stegosaurus" => "stego",
+            "ptero" or "pterodactylus" or "pterodax" => "ptero",
+            "compy" or "compsognathus" => "compy",
+            "special" or "dino-special" or "dino (spezial)" => "special",
+            _ => "ankylo"
+        };
+
+    private static string NormalizeBackgroundStyle(string? backgroundStyle) =>
+        backgroundStyle?.Trim().ToLowerInvariant() switch
+        {
+            "dark blue tint" => "Dark Blue Tint",
+            "dark green tint" => "Dark Green Tint",
+            _ => "Pure Black"
+        };
+
+    private static void Normalize(AppSettings settings)
+    {
+        settings.Theme = NormalizeTheme(settings.Theme);
+        settings.DinoSpecimen = NormalizeDinoSpecimen(settings.DinoSpecimen);
+        settings.BackgroundStyle = NormalizeBackgroundStyle(settings.BackgroundStyle);
+
+        if (settings.Theme == "Rainbow" || settings.DinoSpecimen == "special")
+        {
+            settings.Theme = "Rainbow";
+            settings.DinoSpecimen = "special";
+        }
+    }
 }

@@ -15,7 +15,7 @@ const fallback = {
 
 let target = structuredClone(fallback);
 let display = structuredClone(fallback);
-let settings = { targetFps: 60, animationQuality: 'High', modeIntervalSeconds: 120, theme: 'Blue', backgroundStyle: 'Pure Black', showTerminal: true, showHexStream: true, enableEvents: true, showDinoCore: true };
+let settings = { targetFps: 60, animationQuality: 'High', modeIntervalSeconds: 120, theme: 'Rainbow', backgroundStyle: 'Pure Black', dinoSpecimen: 'special', showTerminal: true, showHexStream: true, enableEvents: true, showDinoCore: true };
 const listeners = new Set();
 const settingsListeners = new Set();
 

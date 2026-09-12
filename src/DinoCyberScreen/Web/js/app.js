@@ -32,18 +32,25 @@ let nextEventAt = performance.now() + 10000 + Math.random() * 20000;
 let nextScanlineAt = performance.now() + 20000 + Math.random() * 40000;
 
 subscribeSettings(settings=>{
-  const themeStr = String(settings.theme || 'blue').toLowerCase();
-  const theme = ['green', 'red', 'white', 'pink', 'rosa'].includes(themeStr) ? (themeStr === 'rosa' ? 'pink' : themeStr) : 'blue';
+  let themeStr = String(settings.theme || 'blue').toLowerCase();
+  let specimen = String(settings.dinoSpecimen || 'ankylo').toLowerCase();
+  if (themeStr === 'rainbow' || specimen === 'special') { themeStr = 'rainbow'; specimen = 'special'; }
+  const theme = ['green', 'red', 'white', 'pink', 'rosa', 'rainbow'].includes(themeStr) ? (themeStr === 'rosa' ? 'pink' : themeStr) : 'blue';
   document.body.dataset.theme = theme;
   app.dataset.theme = theme;
+  document.body.dataset.specimen = specimen;
+  app.dataset.specimen = specimen;
   
   const background={"dark blue tint":"dark-blue","dark green tint":"dark-green"}[String(settings.backgroundStyle||'').toLowerCase()]||'pure-black';app.dataset.background=background;
   
-  const specimen = String(settings.dinoSpecimen || 'ankylo').toLowerCase();
   const holoImg = $('.dino-hologram');
   const holoImg2 = $('.dino-hologram-2');
   const coreTitle = $('#coreTitle');
-  if (specimen === 'triceratops') {
+  if (specimen === 'special') {
+    if (holoImg) holoImg.src = 'assets/dino-special-rainbow.png';
+    if (holoImg2) holoImg2.src = 'assets/dino-special-rainbow.png';
+    if (coreTitle) coreTitle.textContent = 'DINO SPECIAL';
+  } else if (specimen === 'triceratops') {
     if (holoImg) holoImg.src = 'assets/triceratops-hologram.png';
     if (holoImg2) holoImg2.src = 'assets/triceratops-hologram.png';
     if (coreTitle) coreTitle.textContent = 'TRICERA CORE';
@@ -173,11 +180,14 @@ function initBinaryRain() {
         const appEl = document.querySelector('.app') || document.body;
         const themeStyle = getComputedStyle(appEl);
         const primaryHex = themeStyle.getPropertyValue('--primary').trim() || '#26d9ff';
-        ctx.fillStyle = primaryHex;
+        const rainbow = document.querySelector('#app')?.dataset.theme === 'rainbow'
+            ? Array.from({length:7}, (_,i) => themeStyle.getPropertyValue(`--rainbow-${i+1}`).trim())
+            : null;
         ctx.font = fontSize + 'px monospace';
         
         for (let i = 0; i < drops.length; i++) {
             const text = Math.random() > 0.5 ? '1' : '0';
+            ctx.fillStyle = rainbow ? rainbow[i % rainbow.length] : primaryHex;
             ctx.fillText(text, i * fontSize, drops[i] * fontSize);
             
             if (drops[i] * fontSize > height && Math.random() > 0.975) {
