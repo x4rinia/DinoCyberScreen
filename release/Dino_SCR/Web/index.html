@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="color-scheme" content="dark">
+  <title>DinoCyberScreen</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="app" class="app" data-mode="overview" data-theme="rainbow" data-specimen="special" data-background="pure-black">
+    <div class="ambient-grid" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div id="transition" class="transition" aria-hidden="true"></div>
+
+    <header class="top-rail hud-frame">
+      <div class="brand"><span class="brand-mark" id="brandMark">X4RINIA</span><span class="brand-slash">//</span><span>CYBER OPERATIONS</span></div>
+      <div class="rail-separator"></div>
+      <div class="status-unit"><i class="status-dot"></i><span>NODE 01</span></div>
+      <div class="rail-separator"></div>
+      <div class="status-unit active"><i class="status-dot"></i><span>SYSTEM ACTIVE</span></div>
+      <div class="rail-grow"></div>
+      <div class="datetime"><span id="clock">--:--:--</span><span id="date">----.--.--</span><span>UPTIME <b id="uptime">00:00:00</b></span></div>
+      <button id="settingsButton" class="icon-button" type="button" aria-label="Einstellungen öffnen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.2a3.8 3.8 0 1 0 0 7.6 3.8 3.8 0 0 0 0-7.6Zm8 3.8-2.1-1.2.1-2.4-2.1-2.1-2.4.1L12 4.2 10.5 6.4l-2.4-.1L6 8.4l.1 2.4L4 12l2.1 1.2L6 15.6l2.1 2.1 2.4-.1 1.5 2.2 1.5-2.2 2.4.1 2.1-2.1-.1-2.4L20 12Z"/></svg>
+      </button>
+    </header>
+
+    <section class="dashboard">
+      <section class="panel system-panel zone-system" aria-labelledby="systemTitle">
+        <div class="panel-header">
+          <div><span class="header-index">01</span><h2 id="systemTitle">SYSTEM CORE</h2></div>
+          <span class="header-meta" id="hostName">LOCAL NODE</span>
+        </div>
+        <div class="system-rows">
+          <article class="metric" data-metric="cpu">
+            <div class="metric-head"><div><h3>CPU LOAD</h3><small id="cpuName">PROCESSOR ARRAY</small></div><strong id="cpuValue">--%</strong></div>
+            <div class="metric-visual"><div class="segbar"><i id="cpuBar"></i></div><canvas id="cpuChart"></canvas><div class="metric-stats"><span>PEAK <b id="cpuPeak">--</b></span><span>AVG <b id="cpuAvg">--</b></span></div></div>
+            <div id="coreBars" class="core-bars"></div>
+          </article>
+          <article class="metric" data-metric="gpu">
+            <div class="metric-head"><div><h3>GPU LOAD</h3><small id="gpuName">GRAPHICS ARRAY</small></div><strong id="gpuValue">N/A</strong></div>
+            <div class="metric-visual"><div class="segbar green"><i id="gpuBar"></i></div><canvas id="gpuChart"></canvas><div class="metric-stats"><span>PEAK <b id="gpuPeak">--</b></span><span>AVG <b id="gpuAvg">--</b></span></div></div>
+            <div class="metric-foot"><span>TEMP <b id="temperature">N/A</b></span><span>VRAM <b id="vramValue">N/A</b></span></div>
+          </article>
+          <article class="metric compact" data-metric="ram">
+            <div class="metric-head"><div><h3>MEMORY ARRAY</h3><small>PHYSICAL / VIDEO</small></div><strong id="ramValue">--%</strong></div>
+            <div class="metric-visual"><div class="segbar"><i id="ramBar"></i></div><canvas id="ramChart"></canvas><div class="metric-stats"><span>USED <b id="ramUsed">--</b></span><span>TOTAL <b id="ramTotal">--</b></span></div></div>
+          </article>
+        </div>
+        <div class="system-subgrid">
+          <article class="submetric"><h3>NETWORK</h3><strong class="down">↓ <span id="download">0.0</span></strong><small>MBIT/S DOWN</small><strong class="up">↑ <span id="upload">0.0</span></strong><small>MBIT/S UP</small></article>
+          <article class="submetric"><h3>DISK</h3><strong><span id="diskUsage">--</span>%</strong><small id="diskName">SYSTEM DISK</small><div class="io"><span>R <b id="diskRead">N/A</b></span><span>W <b id="diskWrite">N/A</b></span></div></article>
+        </div>
+      </section>
+
+      <section class="panel core-panel zone-dino" aria-labelledby="coreTitle">
+        <div class="dino-scanline" id="dinoScanline" aria-hidden="true"></div>
+        <canvas id="binaryCanvas" class="binary-rain" aria-hidden="true"></canvas>
+        <div class="core-side left"><span>CORE SYNC<i>ONLINE</i></span><span>AI MODULES<i>12 / ONLINE</i></span><span>SECURITY<i>NOMINAL</i></span><span>DATA FLOW<i>STABLE</i></span></div>
+        <div class="core-side right"><span>THREAT SCAN<i>CLEAN</i></span><span>NODE LINK<i>ESTABLISHED</i></span><span>GLOBAL SYNC<i>ONLINE</i></span><span>CORE TEMP<i id="coreTemp">N/A</i></span></div>
+        <div class="core-title"><h1 id="coreTitle">DINO CORE</h1><small>AI SYSTEM NEXUS</small><strong>ONLINE</strong></div>
+        <div class="core-canvas-wrap"><canvas id="coreCanvas"></canvas><img class="dino-hologram" src="assets/dino-special-rainbow.png" alt="" aria-hidden="true"><img class="dino-hologram-2" src="assets/dino-special-rainbow.png" alt="" aria-hidden="true"><div class="core-clock" id="coreClock">--:--:--</div><div class="core-reticle"><i></i><i></i><i></i><i></i></div><div class="core-orbs" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+        <div class="core-callouts" aria-hidden="true">
+          <div class="core-callout left"><div class="core-callout-dot"></div><div class="core-callout-line"></div><div class="core-callout-text">BIO-SCAN ACTIVE</div></div>
+          <div class="core-callout right"><div class="core-callout-dot"></div><div class="core-callout-line"></div><div class="core-callout-text">NODE SYNC</div></div>
+        </div>
+        <div class="core-bottom"><span>DISCOVER</span><span>ANALYZE</span><span>DEFEND</span><span>EVOLVE</span></div>
+      </section>
+
+      <section class="right-stack">
+        <section class="panel network-panel zone-network" aria-labelledby="networkTitle">
+          <div class="panel-header"><div><span class="header-index">02</span><h2 id="networkTitle">NETWORK GRID</h2></div><span class="header-meta">REAL-TIME</span></div>
+          <canvas id="networkCanvas"></canvas>
+          <div class="network-legend"><span><i class="cyan"></i>DATA FLOW</span><span><i class="green"></i>ACTIVE LINK</span><span><i class="amber"></i>STANDBY</span></div>
+          <div class="net-readout"><span>RX <b id="netRx">0.00 Mbps</b></span><span>TX <b id="netTx">0.00 Mbps</b></span><span id="adapter">NO ACTIVE ADAPTER</span></div>
+        </section>
+        <section id="terminalPanel" class="panel terminal-panel zone-data" aria-labelledby="terminalTitle">
+          <div class="panel-header"><div><span class="header-index">03</span><h2 id="terminalTitle">TERMINAL STREAM</h2></div><span class="header-meta live">LIVE</span></div>
+          <div id="terminal" class="terminal" role="log" aria-live="off"></div>
+        </section>
+      </section>
+
+      <section class="bottom-grid">
+        <section id="hexPanel" class="panel data-panel zone-data" aria-labelledby="hexTitle">
+          <div class="panel-header"><div><span class="header-index">04</span><h2 id="hexTitle">HEX / MEMORY STREAM</h2></div><span class="header-meta" id="memoryAddress">0x00007FFA</span></div>
+          <div class="hex-layout"><pre id="hexStream"></pre><div class="buffers"><div><span>MEMORY BLOCK 17</span><b><i id="memoryBuffer"></i></b><small id="memoryBufferValue">81%</small></div><div><span>PACKET BUFFER</span><b><i id="packetBuffer"></i></b><small id="packetBufferValue">58%</small></div><div><span>CORE SYNC</span><b><i style="width:100%"></i></b><small>100%</small></div></div></div>
+        </section>
+        <section class="panel process-panel zone-system" aria-labelledby="processTitle">
+          <div class="panel-header"><div><span class="header-index">05</span><h2 id="processTitle">PROCESS ACTIVITY</h2></div><span class="header-meta"><b id="processCount">0</b> TRACKED</span></div>
+          <table><thead><tr><th>PID</th><th>NAME</th><th>CPU</th><th>MEM</th><th>STATUS</th></tr></thead><tbody id="processRows"></tbody></table>
+        </section>
+        <section class="panel event-panel zone-data" aria-labelledby="eventTitle">
+          <div class="panel-header"><div><span class="header-index">06</span><h2 id="eventTitle">EVENT LOG</h2></div><span class="header-meta">LAST 12</span></div>
+          <div id="eventLog" class="event-log"></div>
+        </section>
+      </section>
+    </section>
+
+    <footer class="bottom-rail">
+      <span>DinoCyberScreen <b>v1.0</b> <em class="author-credit">by X4RiNiA</em></span><span class="motto">SECURE SYSTEMS. BRIGHTER TOMORROWS.</span>
+      <nav id="modeNav" aria-label="Visual mode">
+        <button data-mode="system">SYSTEM</button><button data-mode="network">NETWORK</button><button data-mode="dino">DINO CORE</button><button data-mode="data">DATA</button><button class="active" data-mode="overview">OVERVIEW</button>
+      </nav>
+      <span class="quality" id="qualityState">60 FPS / HIGH</span>
+    </footer>
+
+    <div id="eventOverlay" class="event-overlay" aria-hidden="true"></div>
+  </main>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
