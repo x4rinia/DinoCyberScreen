@@ -4,7 +4,7 @@
 
 ## Dino Spezial — Rainbow Hologram
 
-![Dino Spezial Rainbow Hologram](src/DinoCyberScreen/Web/assets/dino-special-rainbow.png)
+![Dino Spezial Rainbow Hologram](docs/rainbow-screen.png)
 
 The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** theme and uses simultaneous neon accents on the black Cyber-HUD.
 
