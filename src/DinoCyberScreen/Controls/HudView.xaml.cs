@@ -11,6 +11,11 @@ namespace DinoCyberScreen.Controls;
 
 public partial class HudView : System.Windows.Controls.UserControl, IDisposable
 {
+    private static readonly Lazy<Task<CoreWebView2Environment>> SharedWebViewEnvironment =
+        new(CreateWebViewEnvironmentAsync);
+    private static readonly object SharedTelemetryLock = new();
+    private static Task<TelemetryService>? SharedTelemetryInitialization;
+
     private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web);
     private readonly DispatcherTimer _timer;
     private TelemetryService? _telemetry;
@@ -21,6 +26,8 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
     private bool _isSecondary;
     private bool _ready;
     private bool _disposed;
+    private bool _ownsTelemetry;
+    private int _telemetryReadInProgress;
 
     public event EventHandler? SettingsRequested;
     public event EventHandler? ExitRequested;
@@ -33,6 +40,30 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         Loaded += Initialize;
     }
 
+    public static void WarmUp()
+    {
+        _ = SharedWebViewEnvironment.Value;
+    }
+
+    public static void ShutdownSharedTelemetry()
+    {
+        Task<TelemetryService>? initialization;
+        lock (SharedTelemetryLock)
+        {
+            initialization = SharedTelemetryInitialization;
+            SharedTelemetryInitialization = null;
+        }
+
+        if (initialization is null) return;
+        if (initialization.IsCompletedSuccessfully)
+            initialization.Result.Dispose();
+        else
+            _ = initialization.ContinueWith(task =>
+            {
+                if (task.IsCompletedSuccessfully) task.Result.Dispose();
+            }, TaskScheduler.Default);
+    }
+
     public void Configure(SettingsService settingsService, bool previewMode, bool isSecondary = false)
     {
         _settingsService = settingsService;
@@ -40,6 +71,13 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         _isSecondary = isSecondary;
         _settings = settingsService.Load();
         _timer.Interval = _settings.EnergySavingMode ? TimeSpan.FromMilliseconds(2000) : TimeSpan.FromMilliseconds(750);
+        StartTelemetryInitialization();
+    }
+
+    public void Disable()
+    {
+        Loaded -= Initialize;
+        Visibility = Visibility.Collapsed;
     }
 
     public void ReloadSettings()
@@ -68,10 +106,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         }
         try
         {
-            _telemetryTask = Task.Run(() => new TelemetryService());
-            var userDataFolder = Path.Combine(Path.GetTempPath(), "DinoCyberScreen", Guid.NewGuid().ToString());
-            Directory.CreateDirectory(userDataFolder);
-            var webViewEnvironment = await CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
+            var webViewEnvironment = await SharedWebViewEnvironment.Value;
             await Browser.EnsureCoreWebView2Async(webViewEnvironment);
             Browser.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
             Browser.CoreWebView2.Settings.AreDevToolsEnabled = !_previewMode;
@@ -109,22 +144,57 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         }
     }
 
+    private static Task<CoreWebView2Environment> CreateWebViewEnvironmentAsync()
+    {
+        var userDataFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "DinoCyberScreen",
+            "WebView2");
+        Directory.CreateDirectory(userDataFolder);
+        return CoreWebView2Environment.CreateAsync(userDataFolder: userDataFolder);
+    }
+
+    private void StartTelemetryInitialization()
+    {
+        if (_disposed || _telemetryTask is not null) return;
+        if (_settings.ShowRealData)
+        {
+            lock (SharedTelemetryLock)
+                _telemetryTask = SharedTelemetryInitialization ??=
+                    Task.Run(() => new TelemetryService(initializeHardware: true));
+        }
+        else
+        {
+            _ownsTelemetry = true;
+            _telemetryTask = Task.Run(() => new TelemetryService(initializeHardware: false));
+        }
+    }
+
     private async void OnNavigationCompleted(object? sender, CoreWebView2NavigationCompletedEventArgs e)
     {
         if (!e.IsSuccess) return;
         _ready = true;
         SendEnvelope("settings", _settings);
+        StartTelemetryInitialization();
         if (_telemetryTask is null) return;
         try { _telemetry = await _telemetryTask; } catch { }
         SendTelemetry(this, EventArgs.Empty);
         _timer.Start();
     }
 
-    private void SendTelemetry(object? sender, EventArgs e)
+    private async void SendTelemetry(object? sender, EventArgs e)
     {
-        if (!_ready || _telemetry is null || _disposed) return;
-        try { SendEnvelope("telemetry", _telemetry.Read(_settings)); }
+        var telemetry = _telemetry;
+        if (!_ready || telemetry is null || _disposed || Interlocked.Exchange(ref _telemetryReadInProgress, 1) != 0) return;
+        try
+        {
+            var settings = _settings;
+            var payload = await Task.Run(() => telemetry.Read(settings));
+            if (!_disposed && _ready && ReferenceEquals(telemetry, _telemetry))
+                SendEnvelope("telemetry", payload);
+        }
         catch { /* A failed sensor sample must never stop the renderer. */ }
+        finally { Interlocked.Exchange(ref _telemetryReadInProgress, 0); }
     }
 
     private void SendEnvelope<T>(string type, T payload)
@@ -153,7 +223,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
         if (_disposed) return;
         _disposed = true;
         _timer.Stop();
-        _telemetry?.Dispose();
+        if (_ownsTelemetry) _telemetry?.Dispose();
         if (Browser.CoreWebView2 is not null)
         {
             Browser.CoreWebView2.WebMessageReceived -= OnWebMessage;

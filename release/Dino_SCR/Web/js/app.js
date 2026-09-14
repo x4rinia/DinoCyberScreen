@@ -174,6 +174,12 @@ window.addEventListener('keydown',event=>{
   if(event.key==='ArrowLeft')setMode(modes[(modes.indexOf(app.dataset.mode)+modes.length-1)%modes.length],true);
 });
 
+document.addEventListener('click', event => {
+  if (!(event.target instanceof Element) || !event.target.closest('button')) {
+    window.chrome?.webview?.postMessage({command:'exit'});
+  }
+});
+
 // Matrix Binary Rain for Secondary Monitor
 function initBinaryRain() {
     const canvas = document.getElementById('binaryCanvas');

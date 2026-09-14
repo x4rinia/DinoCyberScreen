@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows;
+using DinoCyberScreen.Controls;
 using DinoCyberScreen.Services;
 using Forms = System.Windows.Forms;
 
@@ -17,6 +18,9 @@ public partial class App : System.Windows.Application
         _settingsService = new SettingsService();
         var parsed = StartupOptions.Parse(e.Args);
 
+        if (parsed.Mode != StartupMode.Configure)
+            HudView.WarmUp();
+
         switch (parsed.Mode)
         {
             case StartupMode.Configure:
@@ -32,6 +36,12 @@ public partial class App : System.Windows.Application
                 ShowNormalWindow();
                 break;
         }
+    }
+
+    protected override void OnExit(ExitEventArgs e)
+    {
+        HudView.ShutdownSharedTelemetry();
+        base.OnExit(e);
     }
 
     private void ShowNormalWindow()

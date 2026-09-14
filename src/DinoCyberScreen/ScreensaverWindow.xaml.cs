@@ -39,7 +39,7 @@ public partial class ScreensaverWindow : Window
         
         if (isBlank)
         {
-            Hud.Visibility = Visibility.Collapsed;
+            Hud.Disable();
         }
         else
         {
