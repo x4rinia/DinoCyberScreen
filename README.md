@@ -4,7 +4,7 @@
 
 ## Dino Spezial — Rainbow Hologram
 
-![Dino Spezial Rainbow Hologram](docs/rainbow-screen.png)
+![Dino Spezial Rainbow Hologram mit Fake-Werten](docs/rainbow-screen.png)
 
 The friendly **Dino (Spezial)** is exclusively coupled with the **Rainbow** theme. However, the **Rainbow** theme itself is fully available for all normal dinos as well, adding a dynamic, color-shifting holographic effect to their models.
 
