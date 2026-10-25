@@ -71,6 +71,7 @@ public partial class App : System.Windows.Application
             .ThenBy(s => s.Bounds.Left)
             .ToList();
 
+        var starfieldCount = 0;
         for (var i = 0; i < orderedScreens.Count; i++)
         {
             var screen = orderedScreens[i];
@@ -79,7 +80,25 @@ public partial class App : System.Windows.Application
             var isBlank = displayMode == "blank";
             var isSecondary = !isPrimary;
 
-            var window = new ScreensaverWindow(_settingsService, screen.Bounds, isBlank, isSecondary, displayMode);
+            var isMirrored = false;
+            if (displayMode == "starfield")
+            {
+                starfieldCount++;
+                if (starfieldCount > 1 && (starfieldCount % 2 == 0))
+                {
+                    isMirrored = true;
+                }
+            }
+
+            var window = new ScreensaverWindow(
+                _settingsService,
+                screen.Bounds,
+                isBlank,
+                isSecondary,
+                displayMode,
+                isPrimary,
+                i,
+                isMirrored);
             window.ExitRequested += ExitScreensaver;
             _windows.Add(window);
             window.Show();

@@ -18,7 +18,19 @@ if (!displayMode) {
   else if (urlParams.get('starfield') === '1') displayMode = 'starfield';
   else displayMode = 'full';
 }
+
+const isPrimary = urlParams.get('primary') !== '0';
+const screenIndex = parseInt(urlParams.get('screen') || '0', 10);
+const isMirrored = urlParams.get('mirror') === '1';
+
 document.body.dataset.displayMode = displayMode;
+document.body.dataset.primary = isPrimary ? '1' : '0';
+document.body.dataset.screen = screenIndex.toString();
+if (isMirrored) {
+  document.body.dataset.starfieldMirrored = '1';
+  document.body.classList.add('starfield-mirrored');
+}
+
 if (displayMode === 'dino') document.body.classList.add('secondary-monitor');
 if (displayMode === 'hud') document.body.classList.add('primary-multi');
 if (displayMode === 'full') document.body.classList.add('single-monitor');
@@ -26,7 +38,10 @@ if (displayMode === 'full') document.body.classList.add('single-monitor');
 let starfieldInstance = null;
 const starfieldCanvas = document.getElementById('starfieldCanvas');
 if (starfieldCanvas && displayMode === 'starfield') {
-  starfieldInstance = new Starfield(starfieldCanvas);
+  starfieldInstance = new Starfield(starfieldCanvas, {
+    screenIndex,
+    isMirrored
+  });
 }
 
 requestAnimationFrame(() => requestAnimationFrame(() => {

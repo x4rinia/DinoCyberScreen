@@ -490,10 +490,10 @@ body[data-theme="rainbow"]:not([data-specimen="special"]) .dino-hologram-2 {
 .secondary-monitor .app[data-theme="rainbow"] .core-canvas-wrap::after, body[data-display-mode="dino"] .app[data-theme="rainbow"] .core-canvas-wrap::after { border-color:rgba(41,191,255,.5);box-shadow:0 0 22px rgba(255,79,216,.13),inset 0 0 18px rgba(38,247,199,.08); }
 .secondary-monitor .ambient-grid, body[data-display-mode="dino"] .ambient-grid { opacity: 0.08; }
 
-/* Dedicated Dino Header Clock */
-.dino-header-clock { display: none; }
-.secondary-monitor .dino-header-clock, body[data-display-mode="dino"] .dino-header-clock {
-  display: flex;
+/* Dedicated Dino Header Clock (shown ONLY on primary monitor when in dino mode!) */
+.dino-header-clock { display: none !important; }
+body[data-primary="1"][data-display-mode="dino"] #dinoHeaderClock {
+  display: flex !important;
   flex-direction: column;
   align-items: center;
   position: absolute;
@@ -508,6 +508,28 @@ body[data-theme="rainbow"]:not([data-specimen="special"]) .dino-hologram-2 {
   clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
   backdrop-filter: blur(8px);
   pointer-events: none;
+}
+
+/* Secondary monitors: NO clock of any kind */
+body[data-primary="0"] .dino-header-clock,
+body[data-primary="0"] .datetime,
+body[data-primary="0"] #clock,
+body[data-primary="0"] .core-clock,
+body[data-primary="0"] .starfield-hud,
+body[data-primary="0"] .starfield-clock {
+  display: none !important;
+}
+
+/* Starfield screens NEVER show a clock */
+.starfield-hud,
+.starfield-clock {
+  display: none !important;
+}
+
+/* Mirrored Starfield when multiple monitors show Starfield */
+body.starfield-mirrored #starfieldCanvas,
+body[data-starfield-mirrored="1"] #starfieldCanvas {
+  transform: scaleX(-1);
 }
 .dino-clock-time {
   font-family: "Bahnschrift", "Arial Narrow", sans-serif;

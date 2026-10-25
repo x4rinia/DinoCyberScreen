@@ -1,10 +1,33 @@
 // DinoCyberScreen - Cosmic Starfield Module with Planets & Comets
 // Responsive 3D starfield with color coordination (Rainbow or Theme)
 
+const PLANET_PALETTES = [
+  // 1. Cyber Cyan & Oceanic Abyss
+  { name: 'cyan', primary: '#00f0ff', secondary: '#005f73', ring: '#00f0ff', glow: '#00f0ff', bands: ['#00f0ff', '#0a9396'] },
+  // 2. Cosmic Magenta & Deep Violet
+  { name: 'magenta', primary: '#ff007f', secondary: '#7209b7', ring: '#ff70ec', glow: '#ff007f', bands: ['#ff007f', '#b5179e'] },
+  // 3. Solar Gold & Molten Amber
+  { name: 'gold', primary: '#ffb703', secondary: '#c1121f', ring: '#ffd166', glow: '#ffb703', bands: ['#ffb703', '#fb8500'] },
+  // 4. Emerald & Matrix Mint
+  { name: 'emerald', primary: '#2ec4b6', secondary: '#004b49', ring: '#80ffdb', glow: '#2ec4b6', bands: ['#2ec4b6', '#00f5d4'] },
+  // 5. Crimson Mars & Flame Red
+  { name: 'crimson', primary: '#ff3366', secondary: '#800020', ring: '#ff758f', glow: '#ff3366', bands: ['#ff3366', '#ff5400'] },
+  // 6. Electric Cobalt & Ultraviolet
+  { name: 'cobalt', primary: '#4361ee', secondary: '#3a0ca3', ring: '#4cc9f0', glow: '#4361ee', bands: ['#4361ee', '#4895ef'] },
+  // 7. Toxic Lime & Alien Moss
+  { name: 'lime', primary: '#9ef01a', secondary: '#005f00', ring: '#ccff33', glow: '#9ef01a', bands: ['#9ef01a', '#70e000'] },
+  // 8. Celestial Silver & Pale Orchid
+  { name: 'silver', primary: '#e0aaff', secondary: '#3c096c', ring: '#c77dff', glow: '#e0aaff', bands: ['#e0aaff', '#9d4edd'] },
+  // 9. Prismatic Rainbow (special)
+  { name: 'rainbow', primary: '#ff4fd8', secondary: '#29bfff', ring: '#dfff3f', glow: '#26f7c7', isPrismatic: true, bands: ['#ff4fd8', '#29bfff', '#dfff3f'] }
+];
+
 export class Starfield {
-  constructor(canvas) {
+  constructor(canvas, options = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
+    this.screenIndex = options.screenIndex || 0;
+    this.isMirrored = !!options.isMirrored;
     this.stars = [];
     this.comets = [];
     this.planet = null;
@@ -16,8 +39,21 @@ export class Starfield {
     this.fov = 350;
     this.numStars = 550;
     this.baseSpeed = 1.4;
-    this.nextCometAt = performance.now() + 2000;
-    this.nextPlanetAt = performance.now() + 1000;
+
+    // Asynchronous desynchronized timers per monitor
+    const screenOffsetMs = this.screenIndex * 14000;
+    this.nextCometAt = performance.now() + 2000 + (this.screenIndex * 3500) + Math.random() * 4000;
+
+    // Never spawn planet simultaneously on multiple screens!
+    if (this.screenIndex === 0) {
+      this.spawnPlanet(true);
+      this.nextPlanetAt = performance.now() + 26000 + Math.random() * 18000;
+    } else {
+      this.planet = null;
+      // Stagger subsequent screens so planets appear at completely different times
+      this.nextPlanetAt = performance.now() + 15000 + screenOffsetMs + Math.random() * 15000;
+    }
+
     this.animId = null;
 
     this.resize = this.resize.bind(this);
@@ -27,7 +63,6 @@ export class Starfield {
     this.resize();
     this.initStars();
     this.initNebulae();
-    this.spawnPlanet(true);
     this.start();
   }
 
@@ -122,10 +157,29 @@ export class Starfield {
   }
 
   spawnPlanet(initial = false) {
-    const { isRainbow, palette, primary, secondary } = this.getThemeColors();
+    const { isRainbow, palette: themePalette, primary: themePrimary, secondary: themeSecondary } = this.getThemeColors();
     const types = ['ringed', 'crater', 'tech', 'gas'];
     const type = types[Math.floor(Math.random() * types.length)];
     const radius = 55 + Math.random() * 45;
+
+    // Pick a diverse, vibrant planet color palette
+    let planetPalette;
+    if (isRainbow) {
+      planetPalette = PLANET_PALETTES[Math.floor(Math.random() * PLANET_PALETTES.length)];
+    } else {
+      if (Math.random() < 0.4) {
+        planetPalette = {
+          name: 'theme',
+          primary: themePrimary,
+          secondary: themeSecondary,
+          ring: themePrimary,
+          glow: themePrimary,
+          bands: [themePrimary, themeSecondary]
+        };
+      } else {
+        planetPalette = PLANET_PALETTES[Math.floor(Math.random() * (PLANET_PALETTES.length - 1))];
+      }
+    }
 
     // Place planet across top-half or mid background
     const startX = initial ? this.width * (0.65 + Math.random() * 0.2) : -radius * 2;
@@ -138,8 +192,7 @@ export class Starfield {
       vy: 0.02 * (Math.random() - 0.5),
       radius,
       type,
-      primaryColor: primary,
-      secondaryColor: secondary,
+      palette: planetPalette,
       isRainbow,
       rotation: Math.random() * Math.PI * 2,
       ringTilt: -0.35 + Math.random() * 0.2
@@ -242,19 +295,24 @@ export class Starfield {
 
   drawPlanet(ctx, p) {
     if (!p) return;
-    const { x, y, radius, type, primaryColor, secondaryColor, isRainbow, rotation, ringTilt } = p;
+    const { x, y, radius, type, palette, isRainbow, rotation, ringTilt } = p;
+    const primaryColor = palette?.primary || '#00f0ff';
+    const secondaryColor = palette?.secondary || '#005f73';
+    const ringColor = palette?.ring || primaryColor;
+    const glowColor = palette?.glow || primaryColor;
+    const bands = palette?.bands || [primaryColor, secondaryColor];
 
     ctx.save();
     ctx.translate(x, y);
 
     // Planet atmosphere glow
-    const atmoGrad = ctx.createRadialGradient(0, 0, radius * 0.85, 0, 0, radius * 1.25);
-    atmoGrad.addColorStop(0, hexToRgba(primaryColor, 0.28));
-    atmoGrad.addColorStop(0.5, hexToRgba(secondaryColor, 0.12));
+    const atmoGrad = ctx.createRadialGradient(0, 0, radius * 0.85, 0, 0, radius * 1.3);
+    atmoGrad.addColorStop(0, hexToRgba(glowColor, 0.35));
+    atmoGrad.addColorStop(0.5, hexToRgba(secondaryColor, 0.15));
     atmoGrad.addColorStop(1, 'transparent');
     ctx.fillStyle = atmoGrad;
     ctx.beginPath();
-    ctx.arc(0, 0, radius * 1.25, 0, Math.PI * 2);
+    ctx.arc(0, 0, radius * 1.3, 0, Math.PI * 2);
     ctx.fill();
 
     // Back half of rings (drawn behind planet)
@@ -265,7 +323,9 @@ export class Starfield {
       ctx.beginPath();
       ctx.arc(0, 0, radius * 2.1, Math.PI, Math.PI * 2);
       ctx.lineWidth = radius * 0.32;
-      ctx.strokeStyle = isRainbow ? 'rgba(255, 79, 216, 0.45)' : hexToRgba(secondaryColor, 0.4);
+      ctx.strokeStyle = palette?.isPrismatic
+        ? 'rgba(255, 79, 216, 0.55)'
+        : hexToRgba(ringColor, 0.45);
       ctx.stroke();
       ctx.restore();
     }
@@ -281,9 +341,9 @@ export class Starfield {
       -radius * 0.35, -radius * 0.35, radius * 0.1,
       0, 0, radius * 1.05
     );
-    sphereGrad.addColorStop(0, isRainbow ? '#ffffff' : hexToRgba(primaryColor, 0.95));
-    sphereGrad.addColorStop(0.3, isRainbow ? '#ff4fd8' : primaryColor);
-    sphereGrad.addColorStop(0.7, isRainbow ? '#29bfff' : hexToRgba(secondaryColor, 0.6));
+    sphereGrad.addColorStop(0, '#ffffff');
+    sphereGrad.addColorStop(0.3, primaryColor);
+    sphereGrad.addColorStop(0.7, secondaryColor);
     sphereGrad.addColorStop(1, '#020508');
     ctx.fillStyle = sphereGrad;
     ctx.fill();
@@ -294,7 +354,8 @@ export class Starfield {
       ctx.rotate(rotation);
       ctx.lineWidth = radius * 0.08;
       for (let b = -radius * 0.8; b < radius * 0.8; b += radius * 0.22) {
-        ctx.strokeStyle = (b > 0) ? hexToRgba(primaryColor, 0.22) : hexToRgba(secondaryColor, 0.22);
+        const bandCol = (b > 0) ? bands[0] : (bands[1] || bands[0]);
+        ctx.strokeStyle = hexToRgba(bandCol, 0.28);
         ctx.beginPath();
         ctx.moveTo(-radius, b);
         ctx.lineTo(radius, b);
@@ -303,8 +364,8 @@ export class Starfield {
     } else if (type === 'tech') {
       // Sci-Fi Cyber Grid Lines
       ctx.rotate(rotation);
-      ctx.strokeStyle = hexToRgba(primaryColor, 0.4);
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = hexToRgba(primaryColor, 0.45);
+      ctx.lineWidth = 1.2;
       for (let g = -radius; g < radius; g += 16) {
         ctx.beginPath();
         ctx.arc(0, 0, Math.abs(g), 0, Math.PI * 2);
@@ -321,10 +382,10 @@ export class Starfield {
       for (const cr of craters) {
         ctx.beginPath();
         ctx.arc(cr.cx, cr.cy, cr.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
         ctx.fill();
-        ctx.strokeStyle = hexToRgba(primaryColor, 0.35);
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = hexToRgba(primaryColor, 0.4);
+        ctx.lineWidth = 1.4;
         ctx.stroke();
       }
     }
@@ -347,7 +408,9 @@ export class Starfield {
       ctx.beginPath();
       ctx.arc(0, 0, radius * 2.1, 0, Math.PI);
       ctx.lineWidth = radius * 0.32;
-      ctx.strokeStyle = isRainbow ? 'rgba(41, 191, 255, 0.65)' : hexToRgba(primaryColor, 0.55);
+      ctx.strokeStyle = palette?.isPrismatic
+        ? 'rgba(41, 191, 255, 0.75)'
+        : hexToRgba(ringColor, 0.65);
       ctx.stroke();
       ctx.restore();
     }

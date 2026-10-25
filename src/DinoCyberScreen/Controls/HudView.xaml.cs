@@ -24,6 +24,9 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
     private AppSettings _settings = new();
     private bool _previewMode;
     private bool _isSecondary;
+    private bool _isPrimary = true;
+    private int _screenIndex;
+    private bool _isMirrored;
     private string _displayMode = "";
     private bool _ready;
     private bool _disposed;
@@ -65,12 +68,22 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             }, TaskScheduler.Default);
     }
 
-    public void Configure(SettingsService settingsService, bool previewMode, string displayMode = "", bool isSecondary = false)
+    public void Configure(
+        SettingsService settingsService,
+        bool previewMode,
+        string displayMode = "",
+        bool isSecondary = false,
+        bool isPrimary = true,
+        int screenIndex = 0,
+        bool isMirrored = false)
     {
         _settingsService = settingsService;
         _previewMode = previewMode;
         _displayMode = displayMode;
         _isSecondary = isSecondary;
+        _isPrimary = isPrimary;
+        _screenIndex = screenIndex;
+        _isMirrored = isMirrored;
         _settings = settingsService.Load();
         _timer.Interval = _settings.EnergySavingMode ? TimeSpan.FromMilliseconds(2000) : TimeSpan.FromMilliseconds(750);
         StartTelemetryInitialization();
@@ -137,7 +150,9 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
                 else if (isSingleMonitor) mode = "full";
                 else mode = "hud";
             }
-            var url = $"https://dinocore.local/index.html?mode={Uri.EscapeDataString(mode)}";
+            var primaryParam = _isPrimary ? "1" : "0";
+            var mirrorParam = _isMirrored ? "1" : "0";
+            var url = $"https://dinocore.local/index.html?mode={Uri.EscapeDataString(mode)}&primary={primaryParam}&screen={_screenIndex}&mirror={mirrorParam}";
             Browser.Source = new Uri(url);
         }
         catch (Exception ex)
