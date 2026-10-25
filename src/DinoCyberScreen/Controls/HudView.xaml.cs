@@ -24,6 +24,7 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
     private AppSettings _settings = new();
     private bool _previewMode;
     private bool _isSecondary;
+    private string _displayMode = "";
     private bool _ready;
     private bool _disposed;
     private bool _ownsTelemetry;
@@ -64,10 +65,11 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             }, TaskScheduler.Default);
     }
 
-    public void Configure(SettingsService settingsService, bool previewMode, bool isSecondary = false)
+    public void Configure(SettingsService settingsService, bool previewMode, string displayMode = "", bool isSecondary = false)
     {
         _settingsService = settingsService;
         _previewMode = previewMode;
+        _displayMode = displayMode;
         _isSecondary = isSecondary;
         _settings = settingsService.Load();
         _timer.Interval = _settings.EnergySavingMode ? TimeSpan.FromMilliseconds(2000) : TimeSpan.FromMilliseconds(750);
@@ -127,11 +129,15 @@ public partial class HudView : System.Windows.Controls.UserControl, IDisposable
             Browser.CoreWebView2.SetVirtualHostNameToFolderMapping(
                 "dinocore.local", webRoot, CoreWebView2HostResourceAccessKind.DenyCors);
             
-            var isSingleMonitor = System.Windows.Forms.Screen.AllScreens.Length == 1 || !_settings.AllMonitors;
-            var url = "https://dinocore.local/index.html";
-            if (_isSecondary) url += "?secondary=1";
-            else if (isSingleMonitor) url += "?singleMonitor=1";
-            else url += "?primaryMulti=1";
+            var mode = _displayMode;
+            if (string.IsNullOrWhiteSpace(mode))
+            {
+                var isSingleMonitor = System.Windows.Forms.Screen.AllScreens.Length == 1 || !_settings.AllMonitors;
+                if (_isSecondary) mode = "dino";
+                else if (isSingleMonitor) mode = "full";
+                else mode = "hud";
+            }
+            var url = $"https://dinocore.local/index.html?mode={Uri.EscapeDataString(mode)}";
             Browser.Source = new Uri(url);
         }
         catch (Exception ex)

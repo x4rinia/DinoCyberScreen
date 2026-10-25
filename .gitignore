@@ -1,8 +1,11 @@
-bin/
-obj/
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
 .vs/
 *.user
 *.suo
 release/
 Dino_SCR/
 .launcher-publish/
+*.WebView2/

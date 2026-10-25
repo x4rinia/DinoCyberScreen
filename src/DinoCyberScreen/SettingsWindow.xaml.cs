@@ -25,7 +25,12 @@ public partial class SettingsWindow : Window
         RealDataCheck.IsChecked = settings.ShowRealData;
         EventsCheck.IsChecked = settings.EnableEvents;
         CustomNameText.Text = string.IsNullOrWhiteSpace(settings.CustomName) ? "DINO" : settings.CustomName;
-        Select(MonitorCombo, settings.AllMonitors ? "all" : "primary", useTag: true);
+        var multiMode = settings.MultiMonitorMode;
+        if (string.IsNullOrWhiteSpace(multiMode))
+        {
+            multiMode = settings.AllMonitors ? "hud_dino" : "primary_only";
+        }
+        Select(MultiMonitorCombo, multiMode, useTag: true);
         Select(FpsCombo, settings.TargetFps.ToString(), useTag: false);
         Select(QualityCombo, settings.AnimationQuality, useTag: false);
         Select(DinoCombo, settings.DinoSpecimen, useTag: true);
@@ -79,12 +84,16 @@ public partial class SettingsWindow : Window
             CustomNameText.Text = "DINO";
         }
 
+        var multiMode = Selected(MultiMonitorCombo, true);
+        if (string.IsNullOrWhiteSpace(multiMode)) multiMode = "hud_dino";
+
         _settingsService.Save(new AppSettings
         {
             ShowRealData = RealDataCheck.IsChecked == true,
             EnableEvents = EventsCheck.IsChecked == true,
             CustomName = name,
-            AllMonitors = Selected(MonitorCombo, true) == "all",
+            AllMonitors = multiMode != "primary_only",
+            MultiMonitorMode = multiMode,
             TargetFps = int.TryParse(Selected(FpsCombo, false), out var fps) ? fps : 60,
             AnimationQuality = Selected(QualityCombo, false),
             DinoSpecimen = Selected(DinoCombo, true),

@@ -1,6 +1,8 @@
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using DinoCyberScreen.Controls;
+using DinoCyberScreen.Models;
 using DinoCyberScreen.Services;
 using Forms = System.Windows.Forms;
 
@@ -64,16 +66,82 @@ public partial class App : System.Windows.Application
     {
         var settings = _settingsService!.Load();
         var screens = Forms.Screen.AllScreens;
-        foreach (var screen in screens)
+        var orderedScreens = screens
+            .OrderByDescending(s => s.Primary)
+            .ThenBy(s => s.Bounds.Left)
+            .ToList();
+
+        for (var i = 0; i < orderedScreens.Count; i++)
         {
+            var screen = orderedScreens[i];
             var isPrimary = screen.Primary;
-            var isSecondary = settings.AllMonitors && !isPrimary;
-            var isBlank = !settings.AllMonitors && !isPrimary;
-            
-            var window = new ScreensaverWindow(_settingsService, screen.Bounds, isBlank, isSecondary);
+            var displayMode = GetDisplayModeForScreen(settings, i, orderedScreens.Count, isPrimary);
+            var isBlank = displayMode == "blank";
+            var isSecondary = !isPrimary;
+
+            var window = new ScreensaverWindow(_settingsService, screen.Bounds, isBlank, isSecondary, displayMode);
             window.ExitRequested += ExitScreensaver;
             _windows.Add(window);
             window.Show();
+        }
+    }
+
+    private static string GetDisplayModeForScreen(AppSettings settings, int screenIndex, int totalScreens, bool isPrimary)
+    {
+        if (!settings.AllMonitors)
+        {
+            return isPrimary ? "full" : "blank";
+        }
+
+        if (totalScreens <= 1)
+        {
+            return settings.MultiMonitorMode == "starfield_all" ? "starfield" : "full";
+        }
+
+        var mode = settings.MultiMonitorMode;
+        switch (mode)
+        {
+            case "primary_only":
+                return isPrimary ? "full" : "blank";
+
+            case "full_full":
+                return "full";
+
+            case "starfield_all":
+                return "starfield";
+
+            case "dino_hud":
+                if (screenIndex == 0) return "dino";
+                if (screenIndex == 1) return "hud";
+                return "starfield";
+
+            case "full_starfield":
+                if (screenIndex == 0) return "full";
+                return "starfield";
+
+            case "starfield_full":
+                if (screenIndex == 0) return "starfield";
+                if (screenIndex == 1) return "full";
+                return "starfield";
+
+            case "hud_starfield":
+                if (screenIndex == 0) return "hud";
+                return "starfield";
+
+            case "dino_starfield":
+                if (screenIndex == 0) return "dino";
+                return "starfield";
+
+            case "starfield_dino":
+                if (screenIndex == 0) return "starfield";
+                if (screenIndex == 1) return "dino";
+                return "starfield";
+
+            case "hud_dino":
+            default:
+                if (screenIndex == 0) return "hud";
+                if (screenIndex == 1) return "dino";
+                return "starfield";
         }
     }
 

@@ -21,7 +21,7 @@ public partial class ScreensaverWindow : Window
 
     public event EventHandler? ExitRequested;
 
-    public ScreensaverWindow(SettingsService settingsService, System.Drawing.Rectangle bounds, bool isBlank = false, bool isSecondary = false)
+    public ScreensaverWindow(SettingsService settingsService, System.Drawing.Rectangle bounds, bool isBlank = false, bool isSecondary = false, string displayMode = "")
     {
         InitializeComponent();
         _previewParent = IntPtr.Zero;
@@ -37,13 +37,13 @@ public partial class ScreensaverWindow : Window
             _cursorTimer.Stop();
         };
         
-        if (isBlank)
+        if (isBlank || displayMode == "blank")
         {
             Hud.Disable();
         }
         else
         {
-            Hud.Configure(settingsService, previewMode: false, isSecondary: isSecondary);
+            Hud.Configure(settingsService, previewMode: false, displayMode: displayMode, isSecondary: isSecondary);
         }
         
         AttachInputHandlers();
@@ -62,7 +62,7 @@ public partial class ScreensaverWindow : Window
             Mouse.OverrideCursor = System.Windows.Input.Cursors.None;
             _cursorTimer.Stop();
         };
-        Hud.Configure(settingsService, previewMode: true);
+        Hud.Configure(settingsService, previewMode: true, displayMode: "full");
     }
 
     private void AttachInputHandlers()

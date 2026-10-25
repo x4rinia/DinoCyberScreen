@@ -4,16 +4,30 @@ import { initializeNetwork, drawNetwork, setNetworkQuality } from './network.js'
 import { initializeCore, drawCore, configureCore, setCoreIntensity } from './core3d.js';
 import { initializeStreams, updateStreams } from './terminal.js';
 import { initializeEvents, updateEvents } from './events.js';
+import { Starfield } from './starfield.js';
 
 const $ = selector => document.querySelector(selector);
 const app=$('#app'), modes=['system','network','dino','data','overview'];
 let currentMode=4,nextModeAt=performance.now()+120000,lastUi=0,lastProcesses=0;
 
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('secondary') === '1') document.body.classList.add('secondary-monitor');
-if (urlParams.get('singleMonitor') === '1') document.body.classList.add('single-monitor');
-if (urlParams.get('primary') === '1') document.body.classList.add('primary-monitor');
-if (urlParams.get('primaryMulti') === '1') document.body.classList.add('primary-multi');
+let displayMode = urlParams.get('mode');
+if (!displayMode) {
+  if (urlParams.get('secondary') === '1') displayMode = 'dino';
+  else if (urlParams.get('primaryMulti') === '1') displayMode = 'hud';
+  else if (urlParams.get('starfield') === '1') displayMode = 'starfield';
+  else displayMode = 'full';
+}
+document.body.dataset.displayMode = displayMode;
+if (displayMode === 'dino') document.body.classList.add('secondary-monitor');
+if (displayMode === 'hud') document.body.classList.add('primary-multi');
+if (displayMode === 'full') document.body.classList.add('single-monitor');
+
+let starfieldInstance = null;
+const starfieldCanvas = document.getElementById('starfieldCanvas');
+if (starfieldCanvas && displayMode === 'starfield') {
+  starfieldInstance = new Starfield(starfieldCanvas);
+}
 
 requestAnimationFrame(() => requestAnimationFrame(() => {
   initializeCharts();initializeNetwork();initializeCore();initializeStreams();initializeEvents();
@@ -149,9 +163,27 @@ function triggerRandomAlarm() {
 function renderTelemetry(data){
   const date=data.timestamp?new Date(data.timestamp):new Date();
   const timeStr = date.toLocaleTimeString('de-DE',{hour12:false});
+  const dateStr = date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();
+  const fullDateStr = date.toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}).toUpperCase();
+
   $('#clock').textContent = timeStr;
-  $('#coreClock').textContent = timeStr;
-  $('#date').textContent=date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}).toUpperCase();$('#uptime').textContent=data.uptime||'00:00:00';$('#hostName').textContent=(data.computerName||'LOCAL NODE').toUpperCase();
+  $('#date').textContent = dateStr;
+
+  const dinoClockTime = $('#dinoClockTime');
+  if (dinoClockTime) dinoClockTime.textContent = timeStr;
+  const dinoClockDate = $('#dinoClockDate');
+  if (dinoClockDate) dinoClockDate.textContent = dateStr;
+
+  const starfieldTime = $('#starfieldTime');
+  if (starfieldTime) starfieldTime.textContent = timeStr;
+  const starfieldDate = $('#starfieldDate');
+  if (starfieldDate) starfieldDate.textContent = fullDateStr;
+
+  const coreClock = $('#coreClock');
+  if (coreClock) coreClock.textContent = timeStr;
+
+  $('#uptime').textContent=data.uptime||'00:00:00';
+  $('#hostName').textContent=(data.computerName||'LOCAL NODE').toUpperCase();
   const cpu=data.cpu.usage,gpu=data.gpu.usage,ram=data.ram.usage;setValue('#cpuValue',format(cpu,0,'%'));setWidth('#cpuBar',cpu);$('#cpuName').textContent=data.cpu.name||'PROCESSOR ARRAY';setValue('#gpuValue',format(gpu,0,'%'));setWidth('#gpuBar',gpu);$('#gpuName').textContent=data.gpu.name||'GPU NOT DETECTED';setValue('#ramValue',format(ram,0,'%'));setWidth('#ramBar',ram);$('#ramUsed').textContent=format(data.ram.used,1,' GB');$('#ramTotal').textContent=format(data.ram.total,1,' GB');
   const cs=chartStats('cpu'),gs=chartStats('gpu');$('#cpuPeak').textContent=format(cs.peak,0,'%');$('#cpuAvg').textContent=format(cs.average,0,'%');$('#gpuPeak').textContent=format(gs.peak,0,'%');$('#gpuAvg').textContent=format(gs.average,0,'%');
   const temp=Math.max(data.cpu.temperature||0,data.gpu.temperature||0)||null;$('#temperature').textContent=format(temp,0,'°C');$('#coreTemp').textContent=format(temp,0,'°C');$('#vramValue').textContent=data.gpu.vramUsed==null||data.gpu.vramTotal==null?'N/A':`${data.gpu.vramUsed.toFixed(1)} / ${data.gpu.vramTotal.toFixed(1)} GB`;

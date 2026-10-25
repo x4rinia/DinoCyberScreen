@@ -56,6 +56,10 @@
       </section>
 
       <section class="panel core-panel zone-dino" aria-labelledby="coreTitle">
+        <div class="dino-header-clock" id="dinoHeaderClock">
+          <span class="dino-clock-time" id="dinoClockTime">--:--:--</span>
+          <span class="dino-clock-date" id="dinoClockDate">----.--.--</span>
+        </div>
         <div class="dino-scanline" id="dinoScanline" aria-hidden="true"></div>
         <canvas id="binaryCanvas" class="binary-rain" aria-hidden="true"></canvas>
         <div class="core-side left"><span>CORE SYNC<i>ONLINE</i></span><span>AI MODULES<i>12 / ONLINE</i></span><span>SECURITY<i>NOMINAL</i></span><span>DATA FLOW<i>STABLE</i></span></div>
@@ -105,6 +109,17 @@
       </nav>
       <span class="quality" id="qualityState">60 FPS / HIGH</span>
     </footer>
+
+    <section id="starfieldPanel" class="starfield-panel" aria-hidden="true">
+      <canvas id="starfieldCanvas"></canvas>
+      <div class="starfield-hud">
+        <div class="starfield-clock">
+          <div class="starfield-time" id="starfieldTime">--:--:--</div>
+          <div class="starfield-date" id="starfieldDate">----.--.--</div>
+          <div class="starfield-meta"><span>COSMIC TELEMETRY</span><i>//</i><span>DEEP SPACE LINK</span></div>
+        </div>
+      </div>
+    </section>
 
     <div id="eventOverlay" class="event-overlay" aria-hidden="true"></div>
   </main>
