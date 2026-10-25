@@ -75,7 +75,7 @@ public partial class App : System.Windows.Application
         {
             var screen = orderedScreens[i];
             var isPrimary = screen.Primary;
-            var displayMode = GetDisplayModeForScreen(settings, i, orderedScreens.Count, isPrimary);
+            var displayMode = GetDisplayModeForScreen(settings, screen, i, orderedScreens.Count);
             var isBlank = displayMode == "blank";
             var isSecondary = !isPrimary;
 
@@ -86,63 +86,31 @@ public partial class App : System.Windows.Application
         }
     }
 
-    private static string GetDisplayModeForScreen(AppSettings settings, int screenIndex, int totalScreens, bool isPrimary)
+    private static string GetDisplayModeForScreen(AppSettings settings, Forms.Screen screen, int screenIndex, int totalScreens)
     {
+        if (settings.ScreenAssignments != null &&
+            settings.ScreenAssignments.TryGetValue(screen.DeviceName, out var modeByDevice) &&
+            !string.IsNullOrWhiteSpace(modeByDevice))
+        {
+            return modeByDevice;
+        }
+
+        if (settings.ScreenModes != null && screenIndex < settings.ScreenModes.Count &&
+            !string.IsNullOrWhiteSpace(settings.ScreenModes[screenIndex]))
+        {
+            return settings.ScreenModes[screenIndex];
+        }
+
+        // Fallbacks
         if (!settings.AllMonitors)
         {
-            return isPrimary ? "full" : "blank";
+            return screen.Primary ? "full" : "blank";
         }
 
-        if (totalScreens <= 1)
-        {
-            return settings.MultiMonitorMode == "starfield_all" ? "starfield" : "full";
-        }
-
-        var mode = settings.MultiMonitorMode;
-        switch (mode)
-        {
-            case "primary_only":
-                return isPrimary ? "full" : "blank";
-
-            case "full_full":
-                return "full";
-
-            case "starfield_all":
-                return "starfield";
-
-            case "dino_hud":
-                if (screenIndex == 0) return "dino";
-                if (screenIndex == 1) return "hud";
-                return "starfield";
-
-            case "full_starfield":
-                if (screenIndex == 0) return "full";
-                return "starfield";
-
-            case "starfield_full":
-                if (screenIndex == 0) return "starfield";
-                if (screenIndex == 1) return "full";
-                return "starfield";
-
-            case "hud_starfield":
-                if (screenIndex == 0) return "hud";
-                return "starfield";
-
-            case "dino_starfield":
-                if (screenIndex == 0) return "dino";
-                return "starfield";
-
-            case "starfield_dino":
-                if (screenIndex == 0) return "starfield";
-                if (screenIndex == 1) return "dino";
-                return "starfield";
-
-            case "hud_dino":
-            default:
-                if (screenIndex == 0) return "hud";
-                if (screenIndex == 1) return "dino";
-                return "starfield";
-        }
+        if (totalScreens <= 1) return "full";
+        if (screenIndex == 0) return "hud";
+        if (screenIndex == 1) return "dino";
+        return "starfield";
     }
 
     private void ShowPreview(IntPtr parentHandle)

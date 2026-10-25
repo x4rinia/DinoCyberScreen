@@ -482,3 +482,4 @@ function hexToRgba(hex, alpha = 1) {
   const b = num & 255;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
+

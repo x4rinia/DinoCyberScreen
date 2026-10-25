@@ -11,6 +11,8 @@ public sealed class AppSettings
     public bool ShowDinoCore { get; set; } = true;
     public bool AllMonitors { get; set; } = true;
     public string MultiMonitorMode { get; set; } = "hud_dino";
+    public List<string> ScreenModes { get; set; } = new();
+    public Dictionary<string, string> ScreenAssignments { get; set; } = new();
     public bool EnergySavingMode { get; set; } = false;
     public int TargetFps { get; set; } = 60;
     public string AnimationQuality { get; set; } = "High";

@@ -1,7 +1,8 @@
 <Window x:Class="DinoCyberScreen.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DinoCyberScreen // Configuration" Width="560" Height="560"
+        Title="DinoCyberScreen // Configuration" Width="580" Height="680"
+        MinWidth="520" MinHeight="580"
         ResizeMode="CanResize" WindowStartupLocation="CenterScreen"
         Background="#000000">
     <Window.Resources>
@@ -259,36 +260,24 @@
                     </UniformGrid>
                 </GroupBox>
 
+                <GroupBox x:Name="MonitorGroupBox" Header="MONITOR-KONFIGURATION">
+                    <StackPanel>
+                        <StackPanel x:Name="ScreensPanel" Margin="0,0,0,4">
+                            <!-- Dynamic Screen Rows -->
+                        </StackPanel>
+                        <TextBlock Text="Individuelle Anzeige pro erkanntem Monitor festlegen."
+                                   Foreground="#557481" FontSize="9" Margin="0,2,0,0" />
+                    </StackPanel>
+                </GroupBox>
+
                 <GroupBox Header="DISPLAY &amp; PERFORMANCE">
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition Width="24" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" Margin="0,0,0,14">
-                            <TextBlock Text="MULTI-MONITOR SETUP" Foreground="#7895A4" FontSize="10" />
-                            <ComboBox x:Name="MultiMonitorCombo">
-                                <ComboBoxItem Content="M1: Haupt-HUD  |  M2: Dino-Hologramm" Tag="hud_dino" />
-                                <ComboBoxItem Content="M1: Dino-Hologramm  |  M2: Haupt-HUD" Tag="dino_hud" />
-                                <ComboBoxItem Content="M1: Komplett-HUD (mit Dino)  |  M2: Starfield" Tag="full_starfield" />
-                                <ComboBoxItem Content="M1: Starfield  |  M2: Komplett-HUD (mit Dino)" Tag="starfield_full" />
-                                <ComboBoxItem Content="M1: Haupt-HUD  |  M2: Starfield" Tag="hud_starfield" />
-                                <ComboBoxItem Content="M1: Dino-Hologramm  |  M2: Starfield" Tag="dino_starfield" />
-                                <ComboBoxItem Content="M1: Starfield  |  M2: Dino-Hologramm" Tag="starfield_dino" />
-                                <ComboBoxItem Content="Alle Monitore: Komplett-HUD (mit Dino)" Tag="full_full" />
-                                <ComboBoxItem Content="Alle Monitore: Starfield" Tag="starfield_all" />
-                                <ComboBoxItem Content="Nur Hauptmonitor (weitere Monitore schwarz)" Tag="primary_only" />
-                            </ComboBox>
-                            <TextBlock Text="Ab 3 Monitoren: 3. und weitere Monitore zeigen automatisch das Starfield." Foreground="#557481" FontSize="9" Margin="0,2,0,0" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1" Grid.Column="0">
+                        <StackPanel Grid.Column="0">
                             <TextBlock Text="ANIMATION QUALITY" Foreground="#7895A4" FontSize="10" />
                             <ComboBox x:Name="QualityCombo">
                                 <ComboBoxItem Content="Low" />
@@ -297,7 +286,7 @@
                             </ComboBox>
                             <CheckBox x:Name="EnergySavingCheck" Content="Energiesparmodus" Margin="0,15,0,0" Foreground="#A2BDC8" />
                         </StackPanel>
-                        <StackPanel Grid.Row="1" Grid.Column="2">
+                        <StackPanel Grid.Column="2">
                             <TextBlock Text="TARGET FPS" Foreground="#7895A4" FontSize="10" />
                             <ComboBox x:Name="FpsCombo">
                                 <ComboBoxItem Content="30" />
